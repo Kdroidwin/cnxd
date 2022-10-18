@@ -3302,9 +3302,21 @@ public class ImageManager extends InputStream implements Runnable {
 		byte data[] = new byte[100 * 1024];
 		int total = 0;
 		while (true) {
-			int size = is.read(data, 0, data.length);
-			if (size <= 0) {
-				break;
+			int size = 0;
+			try {
+				size = is.read(data, 0, data.length);
+				if (size <= 0) {
+					break;
+				}
+			}
+			catch (IOException e) {
+				if(total != orglen) {
+					throw new IOException("Can't read file.");
+				}
+				else {
+					//必要なデータを読み終えていた場合に抜ける
+					break;
+				}
 			}
 			// メモリセットも中断する
 			if (mCacheBreak == true || mRunningFlag == false) {
