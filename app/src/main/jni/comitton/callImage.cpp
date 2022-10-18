@@ -356,19 +356,25 @@ JNIEXPORT jint JNICALL Java_src_comitton_stream_CallImgLibrary_ImageConvert (JNI
 #ifdef DEBUG
 				LOGD("ImageConvert : JPEG - quality=%d", p[0]);
 #endif
+#ifdef HAVE_LIBJPEG
 				ret = LoadImageJpeg(&gImageData[gLoadPage], gLoadPage, scale, p[0]);
+#endif
 				if (ret == 0 && gLoadError) {
 					ret = -4;
 				}
 			}
 			else if (type == 2){
+#ifdef HAVE_LIBPNG
 				ret = LoadImagePng(&gImageData[gLoadPage], gLoadPage, scale);
+#endif
 				if (ret == 0 && gLoadError) {
 					ret = -4;
 				}
 			}
 			else if (type == 6){
+#ifdef HAVE_LIBGIF
 				ret = LoadImageGif(&gImageData[gLoadPage], gLoadPage, scale);
+#endif
 				if (ret == 0 && gLoadError) {
 					ret = -4;
 				}

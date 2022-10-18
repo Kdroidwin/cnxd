@@ -6,17 +6,22 @@ def versionPatch = 20
 def revision = "A"
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '29.0.2'
+    compileSdkVersion 32
+    ndkVersion "25.1.8937393"
     defaultConfig {
         applicationId "jp.dip.muracoro.comittona"
-        minSdkVersion 9
-        targetSdkVersion 9  // 30にしたらページ選択のサムネイルが動かなかった
+        minSdkVersion 26
+        targetSdkVersion 28
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}${revision}${versionPatch}"
         multiDexEnabled true    // メソッド数が65535を超えてもビルド可能にする
         ndk {
-            abiFilters "armeabi-v7a", "x86"    // ARM 32bit と x86 32bit でC++をメイクする
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86"
+            externalNativeBuild {
+                cmake {
+                    cppFlags ''
+                }
+            }
         }
     }
     applicationVariants.all { variant ->
@@ -52,8 +57,9 @@ android {
         }
     }
     externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
+        cmake {
+            path file('src/main/jni/CMakeLists.txt')
+            version '3.22.1'
         }
     }
     productFlavors {

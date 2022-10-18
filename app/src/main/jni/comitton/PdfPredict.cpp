@@ -1,7 +1,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <android/log.h>
-#include "../zlib/zlib.h"
+#include <zlib.h>
 #include "PdfCrypt.h"
 
 void predict_png(BYTE *out, BYTE *in, int len, int predictor, int bpp, BYTE *ref);

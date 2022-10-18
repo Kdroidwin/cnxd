@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <android/log.h>
+#include <jpeglib.h>
+#include <jerror.h>
 
 #include "Image.h"
 
@@ -20,8 +22,6 @@ extern jmp_buf		gJmpBuff;
 extern "C"
 {
 //#define XMD_H
-#include "../libjpeg/jpeglib.h"
-#include "../libjpeg/jerror.h"
 }
 
 METHODDEF(void) memory_init_source (j_decompress_ptr cinfo);

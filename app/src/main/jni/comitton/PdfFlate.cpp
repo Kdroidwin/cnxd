@@ -1,5 +1,5 @@
 #include <android/log.h>
-#include "../zlib/zlib.h"
+#include <zlib.h>
 #include "PdfCrypt.h"
 
 int FlateDecompress(BYTE *inbuf, int insize)

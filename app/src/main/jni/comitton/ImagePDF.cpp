@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <android/log.h>
-#include "../zlib/zlib.h"
+#include <zlib.h>
 
 #include "Image.h"
 
