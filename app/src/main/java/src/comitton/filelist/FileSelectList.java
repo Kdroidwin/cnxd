@@ -218,8 +218,8 @@ public class FileSelectList implements Runnable, Callback, DialogInterface.OnDis
 					}
 					if (hidden == true && DEF.checkHiddenFile(name)) {
 						fileList.remove(i);
+						continue;
 					}
-					continue;
 				}
 
 				hit = false;
@@ -228,20 +228,22 @@ public class FileSelectList implements Runnable, Callback, DialogInterface.OnDis
 						// 検索文字列が含まれる
 						hit = true;
 					}
+					//フィルタ設定
+					if(mFilter){
+						if(!hit){
+							fileList.remove(i);
+							continue;
+						}
+						//ディレクトリに適用する場合にリスト削除
+						if(!mApplyDir){
+							if(fileList.get(i).getType() == FileData.FILETYPE_DIR){
+								fileList.remove(i);
+								continue;
+							}
+						}
+					}
 				}
 				fileList.get(i).setMarker(hit);
-
-				//マークではなくフィルタに
-				if(mFilter) {
-					if(marker != null && !hit) {
-						fileList.remove(i);
-					}
-					//マーカー設定andディレクトリに適用する場合のディレクトリは削除
-					if (marker != null && (mApplyDir == true && fileList.get(i).getType() == FileData.FILETYPE_DIR) ) {
-						fileList.remove(i);
-						continue;
-					}
-				}
 
 				if (thread.isInterrupted()) {
 					// 処理中断
