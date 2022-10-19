@@ -445,31 +445,28 @@ public class ImageManager extends InputStream implements Runnable {
 			if (fl.name != null && fl.name.length() > 4 && fl.orglen > 0 && fl.cmplen > 0) {
 				if (mHidden == false || !DEF.checkHiddenFile(fl.name)) {
 					String ext = DEF.getFileExt(fl.name);
-					if (ext.equals(".jpg") || ext.equals(".jpeg")) {
-						fl.type = 1;
-					}
-					else if (ext.equals(".png")) {
-						fl.type = 2;
-					}
-					else if (ext.equals(".gif")) {
-						fl.type = 6;
-					}
-					else if (ext.equals(".webp")) {
-						fl.type = 51;
-					}
-					else if (ext.equals(".avif")) {
-						fl.type = 52;
-					}
-					else if (ext.equals(".heif")) {
-						fl.type = 53;
-					}
-					else if (ext.equals(".jxl")) {
-						fl.type = 54;
+					fl.type = 0;
+					if (FileData.isImage(ext)) {
+						if (ext.equals(".jpg") || ext.equals(".jpeg")) {
+							fl.type = 1;
+						} else if (ext.equals(".png")) {
+							fl.type = 2;
+						} else if (ext.equals(".gif")) {
+							fl.type = 6;
+						} else if (ext.equals(".webp")) {
+							fl.type = 51;
+						} else if (ext.equals(".avif")) {
+							fl.type = 52;
+						} else if (ext.equals(".heif")) {
+							fl.type = 53;
+						} else if (ext.equals(".jxl")) {
+							fl.type = 54;
+						}
 					}
 					else if ((ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
 						fl.type = 3;
 					}
-					/* || ext.equals(".bmp") || ext.equals(".gif") ) { */
+
 					if (fl.type != 0) {
 						// リストへ登録
 						list.add(fl);
@@ -2568,31 +2565,33 @@ public class ImageManager extends InputStream implements Runnable {
 
 				String ext = DEF.getFileExt(name);
 				short type = 0;
-				if (ext.equals(".jpg") || ext.equals(".jpeg")) {
-					type = 1;
-				}
-				else if (ext.equals(".png")) {
-					type = 2;
-				}
-				else if (ext.equals(".gif")) {
-					type = 6;
-				}
-				else if (ext.equals(".webp")) {
-					type = 51;
-				}
-				else if (ext.equals(".avif")) {
-					type = 52;
-				}
-				else if (ext.equals(".heif")) {
-					type = 53;
-				}
-				else if (ext.equals(".jxl")) {
-					type = 54;
+				if (FileData.isImage(ext)) {
+					if (ext.equals(".jpg") || ext.equals(".jpeg")) {
+						type = 1;
+					}
+					else if (ext.equals(".png")) {
+						type = 2;
+					}
+					else if (ext.equals(".gif")) {
+						type = 6;
+					}
+					else if (ext.equals(".webp")) {
+						type = 51;
+					}
+					else if (ext.equals(".avif")) {
+						type = 52;
+					}
+					else if (ext.equals(".heif")) {
+						type = 53;
+					}
+					else if (ext.equals(".jxl")) {
+						type = 54;
+					}
 				}
 				else if ((ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
 					type = 3;
 				}
-				/* || ext.equals(".bmp") || ext.equals(".gif") ) { */
+
 				if (type != 0) {
 					// Image Fileのみ採用
 					FileListItem imgfile = new FileListItem();
