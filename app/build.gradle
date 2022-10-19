@@ -10,16 +10,16 @@ android {
     ndkVersion "25.1.8937393"
     defaultConfig {
         applicationId "jp.dip.muracoro.comittona"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}${revision}${versionPatch}"
         multiDexEnabled true    // メソッド数が65535を超えてもビルド可能にする
         ndk {
-            abiFilters "arm64-v8a", "armeabi-v7a", "x86"
+            abiFilters "arm64-v8a", "x86"
             externalNativeBuild {
                 cmake {
-                    cppFlags ''
+                    cppFlags += ''
                 }
             }
         }
