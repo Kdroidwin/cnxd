@@ -119,6 +119,10 @@ public class ImageManager extends InputStream implements Runnable {
 	public static final int IMAGETYPE_CCITT = 4;
 	public static final int IMAGETYPE_FLATE = 5;
 	public static final int IMAGETYPE_GIF = 6;
+	public static final int IMAGETYPE_WEBP = 51;
+	public static final int IMAGETYPE_AVIF = 52;
+	public static final int IMAGETYPE_HEIF = 53;
+	public static final int IMAGETYPE_JXL = 54;
 
 	public static final int HOSTTYPE_LOCAL = 0;
 	public static final int HOSTTYPE_SAMBA = 1;
@@ -449,6 +453,18 @@ public class ImageManager extends InputStream implements Runnable {
 					}
 					else if (ext.equals(".gif")) {
 						fl.type = 6;
+					}
+					else if (ext.equals(".webp")) {
+						fl.type = 51;
+					}
+					else if (ext.equals(".avif")) {
+						fl.type = 52;
+					}
+					else if (ext.equals(".heif")) {
+						fl.type = 53;
+					}
+					else if (ext.equals(".jxl")) {
+						fl.type = 54;
 					}
 					else if ((ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
 						fl.type = 3;
@@ -2560,6 +2576,18 @@ public class ImageManager extends InputStream implements Runnable {
 				}
 				else if (ext.equals(".gif")) {
 					type = 6;
+				}
+				else if (ext.equals(".webp")) {
+					type = 51;
+				}
+				else if (ext.equals(".avif")) {
+					type = 52;
+				}
+				else if (ext.equals(".heif")) {
+					type = 53;
+				}
+				else if (ext.equals(".jxl")) {
+					type = 54;
 				}
 				else if ((ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
 					type = 3;

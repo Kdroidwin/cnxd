@@ -23,6 +23,10 @@ public class FileData {
 	public static final short EXTTYPE_PNG = 5;
 	public static final short EXTTYPE_GIF = 6;
 	public static final short EXTTYPE_TXT = 7;
+	public static final short EXTTYPE_WEBP = 51;
+	public static final short EXTTYPE_AVIF = 52;
+	public static final short EXTTYPE_HEIF = 53;
+	public static final short EXTTYPE_JXL = 54;
 
 	private String name;
 	private short type;
@@ -143,4 +147,7 @@ public class FileData {
 		return false;
 	}
 
+	public static boolean isImage(String ext) {
+		return ext.equals(".jpg") || ext.equals(".jpeg") || ext.equals(".png") /*|| ext.equals(".gif")*/ || ext.equals(".webp") /*|| ext.equals(".avif") || ext.equals(".heif") || ext.equals(".jxl")*/;
+	}
 }

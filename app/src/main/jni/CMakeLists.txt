@@ -10,6 +10,7 @@ set(FETCHCONTENT_BASE_DIR ${deps})
 
 option(WITH_JPEG "Include JPEG decoder" ON)
 option(WITH_PNG "Include PNG decoder" ON)
+option(WITH_WEBP "Include WebP decoder" ON)
 
 set(COMITTON_SOURCES
         comitton/ImageBlur.cpp
@@ -82,6 +83,20 @@ if(WITH_PNG)
 endif()
 if(WITH_GIF)
 # TODO: add Gif support
+endif()
+if(WITH_WEBP)
+    include(libwebp.cmake)
+    add_definitions(-DHAVE_LIBWEBP)
+    target_sources(comitton PRIVATE comitton/ImageWebP.cpp)
+endif()
+if(WITH_AVIF)
+# TODO: add AVIF support
+endif()
+if(WITH_HEIF)
+# TODO: add HEIF support
+endif()
+if(WITH_JXL)
+# TODO: add JXL support
 endif()
 
 target_link_libraries(comitton android jnigraphics log z)

@@ -1688,8 +1688,8 @@ public class DEF {
 				return 2;
 			}
 		}
-		else if (type != 2 && type != 6) {
-			// pngとgif以外
+		else if (type != 2 && type != 6 && type != 51 && type != 52 && type != 53 && type != 54) {
+			// pngとgif他以外
 			if (w >= lw2 * 2 && h >= lh * 2) {
 				int w_scale = w / lw2;
 				int h_scale = h / lh;

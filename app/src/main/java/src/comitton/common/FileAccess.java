@@ -760,13 +760,25 @@ public class FileAccess {
 					continue;
 				}
 				String ext = DEF.getFileExt(name);
-				if (ext.equals(".jpg") || ext.equals(".jpeg") || ext.equals(".png") || ext.equals(".gif")/* || ext.equals(".bmp")*/) {
+				if (FileData.isImage(ext)) {
 					type = FileData.FILETYPE_IMG;
 					if (ext.equals(".jpg") || ext.equals(".jpeg")) {
 						exttype = FileData.EXTTYPE_JPG;
 					}
 					else if (ext.equals(".png")) {
 						exttype = FileData.EXTTYPE_PNG;
+					}
+					else if (ext.equals(".webp")) {
+						exttype = FileData.EXTTYPE_WEBP;
+					}
+					else if (ext.equals(".avif")) {
+						exttype = FileData.EXTTYPE_AVIF;
+					}
+					else if (ext.equals(".heif")) {
+						exttype = FileData.EXTTYPE_HEIF;
+					}
+					else if (ext.equals(".jxl")) {
+						exttype = FileData.EXTTYPE_JXL;
 					}
 					else {
 						exttype = FileData.EXTTYPE_GIF;

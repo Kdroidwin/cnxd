@@ -421,7 +421,7 @@ public class FileThumbnailLoader extends ThumbnailLoader implements Runnable {
 				Log.d("FileThumbnailLoader", "index=" + index + " loadBitmap3 Filename=" + filename + ", type=pdf");
 				type = FILETYPE_PDF;
 			}
-			else if (ext.equals(".jpg") || ext.equals(".jpeg") || ext.equals(".png") || ext.equals(".gif")/* || ext.equals(".bmp")*/) {
+			else if (FileData.isImage(ext)) {
 				type = FILETYPE_IMG;
 			}
 			else {
