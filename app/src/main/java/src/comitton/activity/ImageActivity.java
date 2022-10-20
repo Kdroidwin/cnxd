@@ -1,8 +1,9 @@
-package jp.dip.muracoro.comittona;
+package src.comitton.activity;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+import jp.dip.muracoro.comittona.R;
 import src.comitton.common.DEF;
 import src.comitton.common.FileAccess;
 import src.comitton.config.SetCacheActivity;
@@ -71,7 +72,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import src.comitton.activity.CropImageActivity;
 import src.comitton.common.ImageAccess;
 import src.comitton.config.SetFileListActivity;
 import src.comitton.data.FileData;

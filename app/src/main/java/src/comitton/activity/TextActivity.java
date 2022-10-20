@@ -1,4 +1,4 @@
-package jp.dip.muracoro.comittona;
+package src.comitton.activity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,7 +59,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;

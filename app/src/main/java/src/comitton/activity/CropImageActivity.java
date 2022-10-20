@@ -20,8 +20,6 @@ import src.comitton.common.DEF;
 import src.comitton.stream.ImageManager;
 import src.comitton.view.image.CropImageView;
 
-import static jp.dip.muracoro.comittona.R.id.cropImageView;
-
 public class CropImageActivity extends Activity implements Runnable, TextWatcher, CropImageView.CropCallback{
     private String mFile;
     private String mPath;
@@ -105,7 +103,7 @@ public class CropImageActivity extends Activity implements Runnable, TextWatcher
 //        mUri = Uri.parse("file://" + uri);
         mAspectRatio = intent.getFloatExtra("aspectRatio", 3.0f / 4.0f);
 
-        mCropImageView = (CropImageView) findViewById(cropImageView);
+        mCropImageView = (CropImageView) findViewById(R.id.cropImageView);
         mCropImageView.setAspectRatio(mAspectRatio);
         mCropImageView.setCallback(this);
 

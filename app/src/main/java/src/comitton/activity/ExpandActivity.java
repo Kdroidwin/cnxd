@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import jp.dip.muracoro.comittona.ImageActivity;
 import jp.dip.muracoro.comittona.R;
-import jp.dip.muracoro.comittona.TextActivity;
 
 import src.comitton.common.DEF;
 import src.comitton.common.FileAccess;

@@ -1,20 +1,15 @@
-package jp.dip.muracoro.comittona;
+package src.comitton.activity;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
-import src.comitton.activity.ExpandActivity;
-import src.comitton.activity.ServerActivity;
+import jp.dip.muracoro.comittona.R;
 import src.comitton.common.DEF;
 import src.comitton.common.FileAccess;
 import src.comitton.config.SetCommonActivity;
@@ -46,10 +41,8 @@ import src.comitton.view.list.ListNoticeListener;
 import src.comitton.view.list.ListScreenView;
 import src.comitton.view.list.RecordListArea;
 import src.comitton.view.list.TitleArea;
-import jcifs.smb.SmbFile;
-//import jp.dip.muracoro.comittona.R;
+
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -77,9 +70,6 @@ import android.os.Parcelable;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.preference.PreferenceManager;
-import android.provider.DocumentsContract;
-import android.provider.DocumentsContract.Document;
-import android.support.v4.provider.DocumentFile;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -96,10 +86,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import java.io.InputStream;
-import java.util.Set;
-import java.util.prefs.Preferences;
 
-import src.comitton.activity.CropImageActivity;
 import src.comitton.common.ImageAccess;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;

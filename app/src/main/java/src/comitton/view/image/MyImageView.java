@@ -7,7 +7,7 @@ import src.comitton.stream.ImageData;
 import src.comitton.stream.ImageManager;
 import src.comitton.view.GuideView;
 import src.comitton.view.GuideView.UpdateListener;
-import jp.dip.muracoro.comittona.ImageActivity;
+import src.comitton.activity.ImageActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -27,8 +27,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.io.IOException;
 
 public class MyImageView extends SurfaceView implements SurfaceHolder.Callback, UpdateListener, DrawNoticeListener, Callback, Runnable {
 	// 描画領域の種別

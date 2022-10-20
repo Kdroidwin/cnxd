@@ -3,7 +3,7 @@ package src.comitton.dialog;
 import java.util.ArrayList;
 import java.util.EventListener;
 
-import jp.dip.muracoro.comittona.FileSelectActivity;
+import src.comitton.activity.FileSelectActivity;
 import src.comitton.common.FileAccess;
 
 import jp.dip.muracoro.comittona.R;
