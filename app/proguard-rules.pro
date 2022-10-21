@@ -58,3 +58,13 @@
 #-keep class org.spongycastle.jcajce.provider.keystore.** {*;}
 -keep class org.spongycastle.jcajce.provider.symmetric.** {*;}
 #-keep class org.bouncycastle.jcajce.provider.symmetric.** {*;}
+-keep class org.bouncycastle.jcajce.provider.asymmetric.* {*;}
+-keep class org.bouncycastle.jcajce.provider.asymmetric.util.* {*;}
+-keep class org.bouncycastle.jcajce.provider.asymmetric.dh.* {*;}
+-keep class org.bouncycastle.jcajce.provider.asymmetric.ec.* {*;}
+-keep class org.bouncycastle.jcajce.provider.asymmetric.rsa.* {*;}
+-keep class org.bouncycastle.jcajce.provider.digest.** {*;}
+-keep class org.bouncycastle.jcajce.provider.keystore.** {*;}
+-keep class org.bouncycastle.jcajce.provider.symmetric.** {*;}
+-keep class org.bouncycastle.jcajce.spec.* {*;}
+-keep class org.bouncycastle.jce.provider.** { *; }
