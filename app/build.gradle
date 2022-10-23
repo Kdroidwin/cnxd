@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "jp.dip.muracoro.comittona"
         minSdkVersion 9
-        targetSdkVersion 9
+        targetSdkVersion 9 // 11以降でSMBまわりでNetworkOnMainThreadExceptionエラー発生
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}${revision}${versionPatch}"
         multiDexEnabled true    // メソッド数が65535を超えてもビルド可能にする

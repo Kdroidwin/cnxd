@@ -152,13 +152,13 @@ public class FileAccess {
 		String path = "";
 		int idx;
 
-//		// SMBの基本設定
-//		// SMB3はデバッグビルドでしか動作しない.
-          // 最適化が悪いと思われる(そのうち検証)
+		// SMBの基本設定
 		Properties prop = new Properties();
 		prop.setProperty("jcifs.smb.client.minVersion", "SMB1");
+		// SMB3は動作未確認
 		prop.setProperty("jcifs.smb.client.maxVersion", "SMB311"); // SMB1, SMB202, SMB210, SMB300, SMB302, SMB311
-		prop.setProperty("jcifs.traceResources", "true");
+		// https://github.com/AgNO3/jcifs-ng/issues/171
+		prop.setProperty("jcifs.traceResources", "false");
 //		prop.setProperty("jcifs.smb.lmCompatibility", "3");
 //		prop.setProperty("jcifs.smb.client.useExtendedSecuruty", "true");
 //		prop.setProperty("jcifs.smb.useRawNTLM", "true");
@@ -210,9 +210,9 @@ public class FileAccess {
 			context = SingletonContext.getInstance().withCredentials(smbAuth);
 
 		} else {
-			// Anonymousは動作しないのでGuestで代替する
-//			context = SingletonContext.getInstance().withAnonymousCredentials();
-			context = SingletonContext.getInstance().withGuestCrendentials();
+			// Connect with anonymous mode
+			context = SingletonContext.getInstance().withAnonymousCredentials();
+//			context = SingletonContext.getInstance().withGuestCrendentials();
 		}
 
 		sfile = new SmbFile(url, context);

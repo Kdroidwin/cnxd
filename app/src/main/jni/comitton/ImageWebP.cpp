@@ -35,7 +35,6 @@ int LoadImageWebp(IMAGEDATA* pData, int page, int scale)
     int width = 0; //デコードデータの幅
     int height = 0; //デコードデータの高さ
     int ch = 3; //RGB
-    LOGI("LoadImageWebp : test\n");
 
     if (gLoadBuffer == NULL) {
         LOGE("LoadImageWebp : [error] gLoadBuffer is null\n");
