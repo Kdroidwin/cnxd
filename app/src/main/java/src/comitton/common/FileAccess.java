@@ -611,6 +611,27 @@ public class FileAccess {
 			// ローカルの場合のファイル一覧取得
 			lfiles = new File(url).listFiles();
 			if (lfiles == null || lfiles.length == 0) {
+				if (url.equals("/storage/")) {
+					// Get emulated/0, SD card paths
+					for (String name: getExtSdCardPaths()) {
+						name = name.substring(9);
+						int index = name.indexOf("/");
+						if (index > 0) {
+							name = name.substring(0, index);
+						}
+						int len = name.length();
+						if (len >= 1 && !name.substring(len - 1).equals("/")) {
+							name += "/";
+						}
+						FileData fileData = new FileData();
+						fileData.setType(FileData.FILETYPE_DIR);
+						fileData.setExtType(FileData.EXTTYPE_NONE);
+						fileData.setName(name);
+						fileData.setSize(0);
+						fileData.setDate(0);
+						fileList.add(fileData);
+					}
+				}
 				return fileList;
 			}
 			length = lfiles.length;
