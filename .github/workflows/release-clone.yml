@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'dev'
       - '*-dev'
       - 'dev-*'
     paths-ignore:
@@ -20,6 +21,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dev'
       - '*-dev'
       - 'dev-*'
     paths-ignore:
@@ -47,9 +49,9 @@ jobs:
         cache: gradle
     - name: Change package name
       run: |
-        grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i 's/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g'
-        grep -l -r '<string name="app_name">ComittoNxA</string>' | xargs sed -i 's/ComittoNxA/ComittoNxD/g'
-        grep -l -r '<string name="app_launch_name">CNxA</string>' | xargs sed -i 's/CNxA/CNxD/g'
+        grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i "s/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g"
+        grep -l -r '<string name="app_name">ComittoNxA</string>' | xargs sed -i "s/<string name=\"app_name\">ComittoNxA<\/string>/<string name=\"app_name\">ComittoNxD<\/string>/g"
+        grep -l -r '<string name="app_launch_name">CNxA</string>' | xargs sed -i "s/<string name=\"app_launch_name\">CNxA<\/string>/<string name=\"app_launch_name\">CNxD<\/string>/g"
     - name: Build with Gradle
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

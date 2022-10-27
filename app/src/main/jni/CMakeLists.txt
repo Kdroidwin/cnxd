@@ -4,10 +4,6 @@ include(FetchContent)
 
 set(CMAKE_BUILD_TYPE Release)
 
-# Change the default path of fetch content to avoid downloading the same dependencies per architecture
-get_filename_component(deps "../_deps" REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-set(FETCHCONTENT_BASE_DIR ${deps})
-
 option(WITH_JPEG "Include JPEG decoder" ON)
 option(WITH_PNG "Include PNG decoder" ON)
 option(WITH_WEBP "Include WebP decoder" ON)
