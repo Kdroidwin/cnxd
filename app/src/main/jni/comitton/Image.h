@@ -121,7 +121,6 @@ int ImageSharpen(int, int, int, int, int);
 int ImageBlur(int, int, int, int, int, int);
 int ImageInvert(int, int, int, int, int);
 int ImageGray(int, int, int, int, int);
-int ImageColoring(int, int, int, int, int);
 int ImageBright(int, int, int, int, int, int, int);
 
 int CreateScaleNear(int, int, int, int, int, int, int);
@@ -132,7 +131,4 @@ int CreateScaleHalf(int, int, int, int, int);
 
 int LoadImageJpeg(IMAGEDATA *, int, int, int);
 int LoadImagePng(IMAGEDATA *, int, int);
-int LoadImageGif(IMAGEDATA *, int, int);
-int LoadImageCCITT(IMAGEDATA *, int, int, int, int, int, int, int, int, int, int, int, int, int, WORD*, int, int);
-int LoadImageFlate(IMAGEDATA *, int, int, int, int, int, int, WORD*, int, int);
 int LoadImageWebp(IMAGEDATA *, int, int);

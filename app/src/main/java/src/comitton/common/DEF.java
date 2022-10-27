@@ -85,7 +85,6 @@ public class DEF {
 	public static final int MENU_SELBOOKMARK = Menu.FIRST + 36;
 	public static final int MENU_SORT = Menu.FIRST + 37;
 	public static final int MENU_ADDDIR = Menu.FIRST + 38;
-	public static final int MENU_COLORING = Menu.FIRST + 39;
 	public static final int MENU_LISTMODE = Menu.FIRST + 40;
 	public static final int MENU_AUTOPLAY = Menu.FIRST + 41;
 	public static final int MENU_TOP_SETTING = Menu.FIRST + 42;
@@ -327,7 +326,6 @@ public class DEF {
 	public static final String KEY_MOIRE = "Moire";
 	public static final String KEY_GRAY = "Gray";
 	public static final String KEY_INVERT = "Invert";
-	public static final String KEY_COLORING = "Coloring";
 	public static final String KEY_TOPSINGLE = "TopSingle";
 	public static final String KEY_MAXTHREAD = "MaxThread";
 	public static final String KEY_THUMBNAILTAP = "ThumbnailTap";

@@ -65,15 +65,7 @@
 				android:gravity="left|center"
 				android:textSize="17sp"
 				android:text= "@string/invertMenu" />
-	
-			<CheckBox
-				android:id="@+id/chk_coloring"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:gravity="left|center"
-				android:textSize="17sp"
-				android:text= "@string/coloringMenu" />
-	
+
 			<CheckBox
 				android:id="@+id/chk_moire"
 				android:layout_width="fill_parent"

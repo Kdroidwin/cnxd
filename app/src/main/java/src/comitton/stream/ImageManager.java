@@ -19,9 +19,6 @@ import java.util.zip.ZipInputStream;
 import src.comitton.common.DEF;
 import src.comitton.common.FileAccess;
 import src.comitton.data.FileData;
-import src.comitton.pdf.PDFManager;
-import src.comitton.pdf.PdfInputStream;
-import src.comitton.pdf.data.PdfCrypt;
 
 import jcifs.smb.SmbRandomAccessFile;
 import android.graphics.Bitmap;
@@ -107,7 +104,6 @@ public class ImageManager extends InputStream implements Runnable {
 	public static final int FILETYPE_DIR = 1;
 	public static final int FILETYPE_ZIP = 2;
 	public static final int FILETYPE_RAR = 3;
-	public static final int FILETYPE_PDF = 4;
 
 	public static final int FILETYPESUB_UNKNOWN = 0;
 	public static final int FILETYPESUB_NORMAL = 1;
@@ -116,8 +112,6 @@ public class ImageManager extends InputStream implements Runnable {
 	public static final int IMAGETYPE_JPEG = 1;
 	public static final int IMAGETYPE_PNG = 2;
 	public static final int IMAGETYPE_TXT = 3;
-	public static final int IMAGETYPE_CCITT = 4;
-	public static final int IMAGETYPE_FLATE = 5;
 	public static final int IMAGETYPE_GIF = 6;
 	public static final int IMAGETYPE_WEBP = 51;
 	public static final int IMAGETYPE_AVIF = 52;
@@ -212,13 +206,10 @@ public class ImageManager extends InputStream implements Runnable {
 	private int mMaxOrgLength;
 
 	private RarInputStream mRarStream = null;
-	private PdfInputStream mPdfStream = null;
 
 	public static final int MSG_PROGRESS = 3;
 	public static final int MSG_CACHE = 5;
 	public static final int MSG_LOADING = 6;
-
-	private PDFManager mPDFMgr;
 	private int mMaxThreadNum;
 
 	private String mRarCharset;
@@ -272,15 +263,15 @@ public class ImageManager extends InputStream implements Runnable {
 			if (mFilePath.substring(mFilePath.length() - 1).equals("/")) {
 				mFileType = FILETYPE_DIR;
 			}
-			else if (ext.equals(".zip") || ext.equals(".cbz") || ext.equals(".epub")) {
-				mFileType = FILETYPE_ZIP;
+			else if (FileData.isArchive(ext)) {
+				if (ext.equals(".zip") || ext.equals(".cbz") || ext.equals(".epub")) {
+					mFileType = FILETYPE_ZIP;
 //				mFileTypeSub = FILETYPESUB_UNKNOWN;
-			}
-			else if (ext.equals(".rar") || ext.equals(".cbr")) {
-				mFileType = FILETYPE_RAR;
-			}
-			else if (ext.equals(".pdf")) {
-				mFileType = FILETYPE_PDF;
+				}
+				else if (ext.equals(".rar") || ext.equals(".cbr")) {
+					mFileType = FILETYPE_RAR;
+				}
+				else throw new IOException("Illegal Path.");
 			}
 			else {
 				throw new IOException("Illegal Path.");
@@ -290,19 +281,6 @@ public class ImageManager extends InputStream implements Runnable {
 				if (mFileType == FILETYPE_DIR) {
 //					dirAccessInit(mFilePath, mUser, mPass);
 					DirFileList(mFilePath, mUser, mPass);
-				}
-				else if (mFileType == FILETYPE_PDF) {
-					mPDFMgr = new PDFManager(this, mOpenMode == OPENMODE_THUMBNAIL || mOpenMode == OPENMODE_THUMBSORT);
-					mFileList = mPDFMgr.pdfFileList(mFilePath);
-					if (mFileList == null) {
-						// データなしの場合は0個の配列
-						mFileList = new FileListItem[0];
-					}
-					mMaxOrgLength = mPDFMgr.getMaxOrgLength();
-					int ret = CallPdfLibrary.pdfAlloc(mMaxOrgLength);
-					if (ret != 0) {
-						throw new IOException("Memory Alloc Error.");
-					}
 				}
 				else {
 					fileAccessInit(mFilePath);
@@ -463,7 +441,7 @@ public class ImageManager extends InputStream implements Runnable {
 							fl.type = 54;
 						}
 					}
-					else if ((ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
+					else if (FileData.isText(ext) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
 						fl.type = 3;
 					}
 
@@ -1198,9 +1176,6 @@ public class ImageManager extends InputStream implements Runnable {
 
 	// 読み込み処理中断
 	public void setBreakTrigger() {
-		if (mPDFMgr != null) {
-			mPDFMgr.setBreakTrigger();
-		}
 		mRunningFlag = false;
 		return;
 	}
@@ -2152,10 +2127,6 @@ public class ImageManager extends InputStream implements Runnable {
 				mRarStream.close();
 				mRarStream = null;
 			}
-			if (mPdfStream != null) {
-				mPdfStream.close();
-				mPdfStream = null;
-			}
 			CallImgLibrary.ImageTerminate();
 		}
 		return;
@@ -2588,7 +2559,7 @@ public class ImageManager extends InputStream implements Runnable {
 						type = 54;
 					}
 				}
-				else if ((ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
+				else if (FileData.isText(ext) && (mOpenMode == OPENMODE_LIST || mOpenMode == OPENMODE_TEXTVIEW)) {
 					type = 3;
 				}
 
@@ -2938,12 +2909,6 @@ public class ImageManager extends InputStream implements Runnable {
 					mRarStream = new RarInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page]);
 					BitmapFactory.decodeStream(mRarStream, null, option);
 				}
-				else if (mFileType == FILETYPE_PDF) {
-					// ファイルキャッシュを作成するときはPDF展開不要
-					PdfCrypt crypt = mPDFMgr.getCrypt();
-					mPdfStream = new PdfInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page], crypt, mMaxOrgLength);
-					BitmapFactory.decodeStream(mPdfStream, null, option);
-				}
 				else {
 					BitmapFactory.decodeStream(this, null, option);
 				}
@@ -3030,18 +2995,6 @@ public class ImageManager extends InputStream implements Runnable {
 				}
 				id = LoadBitmapFile(page, mRarStream, mFileList[page].orglen);
 			}
-			else if (mFileType == FILETYPE_PDF) {
-				// PDFのバイナリを読み込んだあと複合化する
-				if (mPdfStream == null || mPdfStream.getLoadPage() != page) {
-					PdfCrypt crypt = mPDFMgr.getCrypt();
-					mPdfStream = new PdfInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page], crypt, mMaxOrgLength);
-				}
-				else {
-					mPdfStream.initSeek();
-				}
-				// そのまま読み込み
-				id = LoadBitmapFile(page, mPdfStream, mFileList[page].orglen);
-			}
 			else {
 				id = LoadBitmapFile(page, this, mFileList[page].orglen);
 			}
@@ -3106,12 +3059,6 @@ public class ImageManager extends InputStream implements Runnable {
 				// ファイルキャッシュを作成するときはRAR展開不要
 				mRarStream = new RarInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page]);
 				mRarStream.read(result, 0, result.length);
-			}
-			else if (mFileType == FILETYPE_PDF) {
-				// ファイルキャッシュを作成するときはPDF展開不要
-				PdfCrypt crypt = mPDFMgr.getCrypt();
-				mPdfStream = new PdfInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page], crypt, mMaxOrgLength);
-				mPdfStream.read(result, 0, result.length);
 			}
 			else {
 				this.read(result, 0, result.length);
@@ -3207,18 +3154,6 @@ public class ImageManager extends InputStream implements Runnable {
 				}
 				bm = BitmapFactory.decodeStream(mRarStream);
 			}
-			else if (mFileType == FILETYPE_PDF) {
-				// PDFのバイナリを読み込んだあと複合化する
-				if (mPdfStream == null || mPdfStream.getLoadPage() != page) {
-					PdfCrypt crypt = mPDFMgr.getCrypt();
-					mPdfStream = new PdfInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page], crypt, mMaxOrgLength);
-				}
-				else {
-					mPdfStream.initSeek();
-				}
-				// そのまま読み込み
-				bm = BitmapFactory.decodeStream(mPdfStream);
-			}
 			else {
 				bm = BitmapFactory.decodeStream(this);
 			}
@@ -3280,24 +3215,6 @@ public class ImageManager extends InputStream implements Runnable {
 				}
 				bm = BitmapFactory.decodeStream(mRarStream, null, option);
 			}
-			else if (mFileType == FILETYPE_PDF) {
-				// PDFのバイナリを読み込んだあと複合化する
-				if (mPdfStream == null || mPdfStream.getLoadPage() != page) {
-					PdfCrypt crypt = mPDFMgr.getCrypt();
-					mPdfStream = new PdfInputStream(new BufferedInputStream(this, BIS_BUFFSIZE), page, mFileList[page], crypt, mMaxOrgLength);
-				}
-				else {
-					mPdfStream.initSeek();
-				}
-				if (mFileList[page].type == IMAGETYPE_JPEG) {
-					// jpegならそのまま読み込み
-					bm = BitmapFactory.decodeStream(mPdfStream, null, option);
-				}
-				else {
-					// ccitt/flate
-					bm = LoadBitmapFileForPDF(page, mPdfStream, mFileList[page].orglen, option.inSampleSize);
-				}
-			}
 			else {
 				bm = BitmapFactory.decodeStream(this, null, option);
 			}
@@ -3355,13 +3272,8 @@ public class ImageManager extends InputStream implements Runnable {
 		}
 		ImageData id = null;
 		int param[];
-		if (mFileList[page].type == IMAGETYPE_CCITT || mFileList[page].type == IMAGETYPE_FLATE) {
-			param = mFileList[page].params;
-		}
-		else {
-			param = new int[1];
-			param[0] = mQuality;
-		}
+		param = new int[1];
+		param[0] = mQuality;
 
 //		long sttime = SystemClock.uptimeMillis();
 		if (total < orglen) {
@@ -3386,58 +3298,6 @@ public class ImageManager extends InputStream implements Runnable {
 		return id;
 	}
 
-	// PDFからサムネイル画像読込(ビットマップにして返す)
-	private Bitmap LoadBitmapFileForPDF(int page, InputStream is, int orglen, int scale) throws IOException {
-		Bitmap bm = null;
-		try {
-			// 読み込み準備
-			int ret;
-			if (mOpenMode == OPENMODE_THUMBNAIL || mOpenMode == OPENMODE_THUMBSORT || mOpenMode == OPENMODE_LIST) {
-				ret = CallImgLibrary.ImageInitialize(orglen, THUMBNAIL_BUFFSIZE, 1, mMaxThreadNum);
-			}
-			ret = CallImgLibrary.ImageSetPage(page, orglen);
-			if (ret < 0) {
-				return null;
-			}
-			if (mFileList[page].type != IMAGETYPE_CCITT && mFileList[page].type != IMAGETYPE_FLATE) {
-				return null;
-			}
-
-			byte data[] = new byte[16 * 1024];
-			int total = 0;
-			while (true) {
-				int size = is.read(data, 0, data.length);
-				if (size <= 0) {
-					break;
-				}
-				// メモリセットも中断する
-				if (mCacheBreak == true || mRunningFlag == false) {
-					// throw new IOException("User Canceled in loadBitmapFile.");
-					return null;
-				}
-				CallImgLibrary.ImageSetData(data, size);
-				total += size;
-			}
-
-			if (total >= orglen) {
-				// ビットマップを作成して読込
-				int bmpWidth = DEF.divRoundUp(mFileList[page].o_width, scale);
-				int bmpHeight = DEF.divRoundUp(mFileList[page].o_height, scale);
-				bm = Bitmap.createBitmap(bmpWidth, bmpHeight, Config.RGB_565);
-				if (CallImgLibrary.ImageConvertBitmap(mFileList[page].type, scale, mFileList[page].params, bm) < 0) {
-					// 読込失敗
-					bm = null;
-				}
-			}
-		}
-		finally {
-			if (mOpenMode == OPENMODE_THUMBNAIL || mOpenMode == OPENMODE_THUMBSORT || mOpenMode == OPENMODE_LIST) {
-				CallImgLibrary.ImageTerminate();
-			}
-		}
-		return bm;
-	}
-
 	private int mScrWidth;
 	private int mScrHeight;
 	private int mScrCenter;
@@ -3453,7 +3313,6 @@ public class ImageManager extends InputStream implements Runnable {
 	private int mSharpen;	// シャープ化
 	private int mInvert;	// カラー反転
 	private int mGray;		// グレースケール
-	private int mColoring;	// 自動着色
 	private int mMoire;		// モアレ軽減
 	private int mTopSingle;	// 先頭単ページ
 	private int mGamma;		// ガンマ補正
@@ -3481,7 +3340,7 @@ public class ImageManager extends InputStream implements Runnable {
 	}
 
 	// 設定変更
-	public void setConfig(int mode, int center, boolean fFitDual, int dispMode, boolean noExpand, int algoMode, int rotate, int wadjust, int wscale, int scale, int pageway, int mgncut, int quality, int bright, int gamma, boolean sharpen, boolean invert, boolean gray, boolean coloring, boolean pseland, boolean moire, boolean topsingle, boolean scaleinit) {
+	public void setConfig(int mode, int center, boolean fFitDual, int dispMode, boolean noExpand, int algoMode, int rotate, int wadjust, int wscale, int scale, int pageway, int mgncut, int quality, int bright, int gamma, boolean sharpen, boolean invert, boolean gray, boolean pseland, boolean moire, boolean topsingle, boolean scaleinit) {
 		Log.d("ImageManager", "setConfig wscale=" + wscale + ", scale=" + scale);
 		mScrScaleMode = mode;
 		if (scaleinit) {
@@ -3503,7 +3362,6 @@ public class ImageManager extends InputStream implements Runnable {
 		mSharpen = sharpen ? 1 : 0;
 		mInvert = invert ? 1 : 0;
 		mGray = gray ? 1 : 0;
-		mColoring = coloring ? 1 : 0;
 		mQuality = quality;
 		mPseLand = pseland;
 		mMoire = moire ? 1 : 0;
@@ -4070,7 +3928,7 @@ public class ImageManager extends InputStream implements Runnable {
 					// スケール作成
 					sendMessage(mHandler, MSG_CACHE, 0, 2, null);
 //					long sttime = SystemClock.uptimeMillis();
-					int param = CallImgLibrary.ImageScaleParam(mSharpen, mInvert, mGray, mColoring, mMoire, pseland);
+					int param = CallImgLibrary.ImageScaleParam(mSharpen, mInvert, mGray, 0, mMoire, pseland);
 					if (CallImgLibrary.ImageScale(page1, half1, width[0], height[0], left[0], right[0], top[0], bottom[0], mScrAlgoMode, mScrRotate, mMarginCut, mBright, mGamma, param, size) >= 0) {
 						Log.d("ImageManager", "ImageScaling Page=" + page1 + ", Half=" + half1 + ", 完成サイズP1 size_w=" + size[0] + ", size_h=" + size[1]);
 						mMemCacheFlag[page1].fScale[half1] = true;
@@ -4114,7 +3972,7 @@ public class ImageManager extends InputStream implements Runnable {
 					// スケール作成
 					sendMessage(mHandler, MSG_CACHE, 0, 2, null);
 //					long sttime = SystemClock.uptimeMillis();
-					int param = CallImgLibrary.ImageScaleParam(mSharpen, mInvert, mGray, mColoring, mMoire, pseland);
+					int param = CallImgLibrary.ImageScaleParam(mSharpen, mInvert, mGray, 0, mMoire, pseland);
 					if (CallImgLibrary.ImageScale(page2, half2, width[1], height[1], left[1], right[1], top[1], bottom[1], mScrAlgoMode, mScrRotate, mMarginCut, mBright, mGamma, param, size) >= 0) {
 						Log.d("ImageManager", "ImageScaling Page=" + page2 + ", Half=" + half2 + ", 完成サイズP2 size_w=" + size[0] + ", size_h=" + size[1]);
 						mMemCacheFlag[page2].fScale[half2] = true;
@@ -4219,17 +4077,6 @@ public class ImageManager extends InputStream implements Runnable {
 								break;
 							}
 							int readsize = mRarStream.read(buff, 0, buff.length);
-							if (readsize <= 0) {
-								break;
-							}
-							os.write(buff, 0, readsize);
-						}
-					} else if (mFileType == FILETYPE_PDF) {
-						while (mRunningFlag == true) {
-							if (mCloseFlag) {
-								break;
-							}
-							int readsize = this.read(buff, 0, buff.length);
 							if (readsize <= 0) {
 								break;
 							}

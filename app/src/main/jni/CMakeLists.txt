@@ -27,25 +27,12 @@ set(COMITTON_SOURCES
         comitton/ImageSharpen.cpp
         comitton/ImageInvert.cpp
         comitton/ImageGray.cpp
-        comitton/ImageColoring.cpp
         comitton/ImageHalf.cpp
         comitton/callImage.cpp
         comitton/TextCommon.cpp
         comitton/callText.cpp
         )
 
-set(MUPDF_SOURCES
-        comitton/PdfAes.cpp
-        comitton/PdfArc4.cpp
-        comitton/PdfCommon.cpp
-        comitton/PdfCrypt.cpp
-        comitton/PdfFlate.cpp
-        comitton/PdfMd5.cpp
-        comitton/PdfPredict.cpp
-        comitton/PdfSha256.cpp
-        comitton/callPdf.cpp
-        comitton/ImagePDF.cpp
-        )
 set(UNRAR_SOURCES
         unrar5/crc.cpp
         unrar5/crypt.cpp
@@ -67,7 +54,6 @@ set(UNRAR_SOURCES
 
 add_library(comitton SHARED
         ${COMITTON_SOURCES}
-        ${MUPDF_SOURCES}
         ${UNRAR_SOURCES}
         )
 

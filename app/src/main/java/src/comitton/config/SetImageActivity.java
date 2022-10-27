@@ -493,12 +493,6 @@ public class SetImageActivity extends PreferenceActivity implements OnSharedPref
 		return flag;
 	}
 
-	public static boolean getColoring(SharedPreferences sharedPreferences){
-		boolean flag;
-		flag =  DEF.getBoolean(sharedPreferences, DEF.KEY_COLORING, false);
-		return flag;
-	}
-
 	public static boolean getMoire(SharedPreferences sharedPreferences){
 		boolean flag;
 		flag =  DEF.getBoolean(sharedPreferences, DEF.KEY_MOIRE, false);

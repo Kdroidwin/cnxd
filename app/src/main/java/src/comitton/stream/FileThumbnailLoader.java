@@ -279,7 +279,7 @@ public class FileThumbnailLoader extends ThumbnailLoader implements Runnable {
 		}
 		else {
 			String ext = DEF.getExtension(filename);
-			if (ext.equals(".txt")) {
+			if (FileData.isText(ext)) {
 				// 対象外のファイル
 				CallImgLibrary.ThumbnailSetNone(mID, index);
 				ret = true;
@@ -319,7 +319,7 @@ public class FileThumbnailLoader extends ThumbnailLoader implements Runnable {
 			return false;
 		}
 		String ext = DEF.getExtension(filename);
-		if (ext.equals(".txt")) {
+		if (FileData.isText(ext)) {
 			// 対象外のファイル
 			//CallImgLibrary.ThumbnailSetNone(mID, index);
 			return false;
@@ -409,17 +409,15 @@ public class FileThumbnailLoader extends ThumbnailLoader implements Runnable {
 
 		if (pathfile != null) {
 			int type = FILETYPE_IMG;
-			if (ext.equals(".zip") || ext.equals(".cbz") || ext.equals(".epub")) {
-				Log.d("FileThumbnailLoader", "index=" + index + " loadBitmap3 Filename=" + filename + ", type=zip");
-				type = FILETYPE_ZIP;
-			}
-			else if (ext.equals(".rar") || ext.equals(".cbr")) {
-				Log.d("FileThumbnailLoader", "index=" + index + " loadBitmap3 Filename=" + filename + ", type=rar");
-				type = FILETYPE_RAR;
-			}
-			else if (ext.equals(".pdf")) {
-				Log.d("FileThumbnailLoader", "index=" + index + " loadBitmap3 Filename=" + filename + ", type=pdf");
-				type = FILETYPE_PDF;
+			if (FileData.isArchive(ext)) {
+				if (ext.equals(".zip") || ext.equals(".cbz") || ext.equals(".epub")) {
+					Log.d("FileThumbnailLoader", "index=" + index + " loadBitmap3 Filename=" + filename + ", type=zip");
+					type = FILETYPE_ZIP;
+				}
+				else if (ext.equals(".rar") || ext.equals(".cbr")) {
+					Log.d("FileThumbnailLoader", "index=" + index + " loadBitmap3 Filename=" + filename + ", type=rar");
+					type = FILETYPE_RAR;
+				}
 			}
 			else if (FileData.isImage(ext)) {
 				type = FILETYPE_IMG;

@@ -45,7 +45,6 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 	private boolean mSharpen;
 	private boolean mInvert;
 	private boolean mGray;
-	private boolean mColoring;
 	private boolean mMoire;
 	private boolean mTopSingle;
 	private int mBright;
@@ -68,7 +67,6 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 	private CheckBox mChkSharpen;
 	private CheckBox mChkGray;
 	private CheckBox mChkInvert;
-	private CheckBox mChkColoring;
 	private CheckBox mChkMoire;
 	private CheckBox mChkTopSingle;
 	private CheckBox mChkIsSave;
@@ -170,11 +168,10 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 		}
 	}
 
-	public void setConfig(boolean sharpen, boolean gray, boolean invert, boolean coloring, boolean moire, boolean topsingle, int bright, int gamma, int bklight, int algomode, int dispmode, int scalemode, int mgncut, boolean issave) {
+	public void setConfig(boolean sharpen, boolean gray, boolean invert, boolean moire, boolean topsingle, int bright, int gamma, int bklight, int algomode, int dispmode, int scalemode, int mgncut, boolean issave) {
 		mSharpen = sharpen;
 		mGray = gray;
 		mInvert = invert;
-		mColoring = coloring;
 		mMoire = moire;
 		mTopSingle = topsingle;
 		mBright = bright;
@@ -196,7 +193,6 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 		mChkSharpen = (CheckBox) this.findViewById(R.id.chk_sharpen);
 		mChkGray = (CheckBox) this.findViewById(R.id.chk_gray);
 		mChkInvert = (CheckBox) this.findViewById(R.id.chk_invert);
-		mChkColoring = (CheckBox) this.findViewById(R.id.chk_coloring);
 		mChkMoire = (CheckBox) this.findViewById(R.id.chk_moire);
 		mChkTopSingle = (CheckBox) this.findViewById(R.id.chk_topsingle);
 		mChkIsSave = (CheckBox) this.findViewById(R.id.chk_save);
@@ -204,7 +200,6 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 		mChkSharpen.setChecked(mSharpen);
 		mChkGray.setChecked(mGray);
 		mChkInvert.setChecked(mInvert);
-		mChkColoring.setChecked(mColoring);
 		mChkMoire.setChecked(mMoire);
 		mChkTopSingle.setChecked(mTopSingle);
 		mChkIsSave.setChecked(mIsSave);
@@ -312,7 +307,7 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 	public interface ImageConfigListenerInterface extends EventListener {
 
 	    // メニュー選択された
-	    public void onButtonSelect(int select, boolean sharpen, boolean gray, boolean invert, boolean coloring, boolean moire, boolean topsingle, int bright, int gamma, int bklight, int algomode, int dispmode, int scalemode, int mgncut, boolean issave);
+	    public void onButtonSelect(int select, boolean sharpen, boolean gray, boolean invert, boolean moire, boolean topsingle, int bright, int gamma, int bklight, int algomode, int dispmode, int scalemode, int mgncut, boolean issave);
 	    public void onClose();
 	}
 
@@ -430,14 +425,13 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 
 		if (select == CLICK_REVERT) {
 			// 戻すは元の値を通知
-			mListener.onButtonSelect(select, mSharpen, mGray, mInvert, mColoring, mMoire, mTopSingle, mBright, mGamma, mBkLight, mAlgoMode, mDispMode, mScaleMode, mMgnCut, mIsSave);
+			mListener.onButtonSelect(select, mSharpen, mGray, mInvert, mMoire, mTopSingle, mBright, mGamma, mBkLight, mAlgoMode, mDispMode, mScaleMode, mMgnCut, mIsSave);
 		}
 		else {
 			// OK/適用は設定された値を通知
 			boolean sharpen = mChkSharpen.isChecked();
 			boolean gray = mChkGray.isChecked();
 			boolean invert = mChkInvert.isChecked();
-			boolean coloring = mChkColoring.isChecked();
 			boolean moire = mChkMoire.isChecked();
 			boolean topsingle = mChkTopSingle.isChecked();
 			boolean issave = mChkIsSave.isChecked();
@@ -450,7 +444,7 @@ public class ImageConfigDialog extends Dialog implements OnClickListener, OnDism
 //			int mgncut = mSpnMgncut.getSelectedItemPosition();
 
 
-			mListener.onButtonSelect(select, sharpen, gray, invert, coloring, moire, topsingle, bright, gamma, bklight, mAlgoModeTemp, mDispModeTemp, mScaleModeTemp, mMgnCutTemp, issave);
+			mListener.onButtonSelect(select, sharpen, gray, invert, moire, topsingle, bright, gamma, bklight, mAlgoModeTemp, mDispModeTemp, mScaleModeTemp, mMgnCutTemp, issave);
 		}
 
 		if (select != CLICK_APPLY) {

@@ -3134,7 +3134,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 					break;
 				case FileData.FILETYPE_ARC:
 					String ext = DEF.getFileExt(infile);
-					if (ext.equals(".txt") || ext.equals(".html") || ext.equals(".xhtml")) {
+					if (FileData.isText(ext)) {
 						// zip内テキストファイルオープン
 						expandCompFile(fd.getName(), infile, page);
 					}

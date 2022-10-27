@@ -31,7 +31,6 @@ int CreateScale(int Page, int Half, int SclWidth, int SclHeight, int left, int r
 	int Sharpen  = (Param & PARAM_SHARPEN) != 0 ? 1 : 0;
 	int Invert   = (Param & PARAM_INVERT) != 0 ? 1 : 0;;
 	int Gray     = (Param & PARAM_GRAY) != 0 ? 1 : 0;
-	int Coloring = (Param & PARAM_COLORING) != 0 ? 1 : 0;
 	int Moire    = (Param & PARAM_MOIRE) != 0 ? 1 : 0;
 	int Pseland  = (Param & PARAM_PSELAND) != 0 ? 1 : 0;
 
@@ -275,21 +274,6 @@ int CreateScale(int Page, int Half, int SclWidth, int SclHeight, int left, int r
 
 		// グレースケール化
 		ret = ImageGray(Page, Half, Index, scl_w, scl_h);
-		if (ret < 0) {
-			return ret;
-		}
-		// 色の変化だけなのでワークデータは作成されない
-	}
-
-	if (Coloring > 0) {
-		// 元データ配列化
-		ret = SetLinesPtr(Page, Half, Index, scl_w, scl_h);
-		if (ret < 0) {
-			return ret;
-		}
-
-		// 自動着色
-		ret = ImageColoring(Page, Half, Index, scl_w, scl_h);
 		if (ret < 0) {
 			return ret;
 		}

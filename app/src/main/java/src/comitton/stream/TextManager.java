@@ -13,7 +13,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import src.comitton.common.DEF;
 import src.comitton.data.MarkerDrawData;
 import src.comitton.data.TextDrawData;
-import src.comitton.pdf.data.PictureData;
+import src.comitton.data.PictureData;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;

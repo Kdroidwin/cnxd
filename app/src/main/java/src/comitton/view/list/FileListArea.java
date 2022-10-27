@@ -290,9 +290,6 @@ public class FileListArea extends ListArea implements Handler.Callback {
 							else if (exttype == FileData.EXTTYPE_RAR) {
 								bmMark = mMark[FILEMARK_RAR];
 							}
-							else if (exttype == FileData.EXTTYPE_PDF) {
-								bmMark = mMark[FILEMARK_PDF];
-							}
 						}
 
 						int retBitmap = CallImgLibrary.ThumbnailCheck(mThumbnailId, index);
@@ -578,9 +575,6 @@ public class FileListArea extends ListArea implements Handler.Callback {
 						}
 						else if (exttype == FileData.EXTTYPE_RAR) {
 							bmMark = mMark[FILEMARK_RAR];
-						}
-						else if (exttype == FileData.EXTTYPE_PDF) {
-							bmMark = mMark[FILEMARK_PDF];
 						}
 					}
 

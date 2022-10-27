@@ -134,7 +134,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 		DEF.MENU_SHARPEN,	// シャープ化
 		DEF.MENU_INVERT,	// 白黒反転
 		DEF.MENU_GRAY,		// グレースケール
-		DEF.MENU_COLORING,	// 自動着色
 		DEF.MENU_IMGROTA,	// 画像回転
 		DEF.MENU_IMGALGO,	// 画像補間方式
 		DEF.MENU_REVERSE, 	// ページ逆順
@@ -160,7 +159,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 		R.string.sharpenMenu,	// シャープ化
 		R.string.invertMenu,	// 白黒反転
 		R.string.grayMenu,		// グレースケール
-		R.string.coloringMenu,	// 自動着色
 		R.string.imgRotaMenu,	// 画像回転
 		R.string.algoriMenu,	// 画像補間方式
 		R.string.reverseMenu,	// ページ逆順
@@ -281,7 +279,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 	private boolean mSharpen;
 	private boolean mInvert;
 	private boolean mGray;
-	private boolean mColoring;
 	private boolean mMoire;
 	private boolean mTopSingle;
 	private boolean mSavePage;
@@ -597,12 +594,12 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 				if (path.length() > prev + 1) {
 					mPath = path.substring(0, prev + 1);
 					String ext = DEF.getFileExt(path);
-					if (ext.equals(".zip") || ext.equals(".rar") || ext.equals(".cbz") || ext.equals(".cbr") || ext.equals(".pdf") || ext.equals(".epub")) {
+					if (FileData.isArchive(ext)) {
 						// 圧縮ファイル
 						mFileName = path.substring(prev + 1);
 						mImageName = "";
 					}
-					else if (ext.equals(".jpg") || ext.equals(".jpeg") || ext.equals(".png") || ext.equals(".gif")) {
+					else if (FileData.isImage(ext)) {
 						// その他
 						mFileName = "";
 						mImageName = path.substring(prev + 1);
@@ -1753,7 +1750,7 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 	private void setMgrConfig(boolean scaleinit) {
 		if (mImageMgr != null) {
 			mImageMgr.setConfig(mScaleMode, mCenter, mFitDual, mDispMode, mNoExpand, mAlgoMode, mRotate, mWAdjust
-					, mWidthScale, mImgScale, mPageWay, mMgnCut, mQuality, mBright, mGamma, mSharpen, mInvert, mGray, mColoring, mPseLand, mMoire, mTopSingle, scaleinit);
+					, mWidthScale, mImgScale, mPageWay, mMgnCut, mQuality, mBright, mGamma, mSharpen, mInvert, mGray, mPseLand, mMoire, mTopSingle, scaleinit);
 		}
 		// モードが変わればスケールは初期化
 		if (scaleinit) {
@@ -2759,20 +2756,19 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 				break;
 			}
 		}
-		mImageConfigDialog.setConfig(mSharpen, mGray, mInvert, mColoring, mMoire, mTopSingle, mBright, mGamma, mBkLight, mAlgoMode, mDispMode, selIndex, mMgnCut, mIsConfSave);
+		mImageConfigDialog.setConfig(mSharpen, mGray, mInvert, mMoire, mTopSingle, mBright, mGamma, mBkLight, mAlgoMode, mDispMode, selIndex, mMgnCut, mIsConfSave);
 		mImageConfigDialog.setImageConfigListner(new ImageConfigListenerInterface() {
 			@Override
-			public void onButtonSelect(int select, boolean sharpen, boolean gray, boolean invert, boolean coloring, boolean moire, boolean topsingle, int bright, int gamma, int bklight, int algomode, int dispmode, int scalemode, int mgncut, boolean issave) {
+			public void onButtonSelect(int select, boolean sharpen, boolean gray, boolean invert, boolean moire, boolean topsingle, int bright, int gamma, int bklight, int algomode, int dispmode, int scalemode, int mgncut, boolean issave) {
 				// 選択状態を通知
 				boolean ischange = false;
 				// 変更があるかを確認(適用後のキャンセルの場合も含む)
-				if (mSharpen != sharpen || mGray != gray || mInvert != invert || mColoring != coloring || mMoire != moire || mTopSingle != topsingle || mBright != bright || mGamma != gamma || mAlgoMode != algomode || mDispMode != dispmode || mMgnCut != mgncut) {
+				if (mSharpen != sharpen || mGray != gray || mInvert != invert || mMoire != moire || mTopSingle != topsingle || mBright != bright || mGamma != gamma || mAlgoMode != algomode || mDispMode != dispmode || mMgnCut != mgncut) {
 					ischange = true;
 				}
 				mSharpen = sharpen;
 				mGray = gray;
 				mInvert = invert;
-				mColoring = coloring;
 				mMoire = moire;
 				mTopSingle = topsingle;
 				mBright = bright;
@@ -2821,7 +2817,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 					ed.putBoolean(DEF.KEY_SHARPEN, mSharpen);
 					ed.putBoolean(DEF.KEY_GRAY, mGray);
 					ed.putBoolean(DEF.KEY_INVERT, mInvert);
-					ed.putBoolean(DEF.KEY_COLORING, mColoring);
 					ed.putBoolean(DEF.KEY_MOIRE, mMoire);
 					ed.putBoolean(DEF.KEY_TOPSINGLE, mTopSingle);
 					ed.putString(DEF.KEY_BRIGHT, Integer.toString(mBright));
@@ -3134,8 +3129,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 //		mMenuDialog.addItem(DEF.MENU_INVERT, res.getString(R.string.invertMenu), mInvert);
 //		// グレースケール
 //		mMenuDialog.addItem(DEF.MENU_GRAY, res.getString(R.string.grayMenu), mGray);
-//		// 自動着色
-//		mMenuDialog.addItem(DEF.MENU_COLORING, res.getString(R.string.coloringMenu), mColoring);
 		// ページ逆順
 		mMenuDialog.addItem(DEF.MENU_REVERSE, res.getString(R.string.reverseMenu), mReverseOrder);
 		// 開き方向入れ替え
@@ -3303,13 +3296,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 				setBitmapImage();
 				break;
 			}
-			case DEF.MENU_COLORING: {
-				// 自動着色
-				mColoring = mColoring ? false : true;
-				setImageConfig();
-				setBitmapImage();
-				break;
-			}
 			case DEF.MENU_HELP: {
 				// 操作方法画面に遷移
 				// Intent intent = new Intent(ImageActivity.this,
@@ -3383,18 +3369,20 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 				String path = mImageMgr.decompFile(page);
 				if (path != null && path.length() >= 5) {
 					String ext = DEF.getFileExt(path);
-					String mime;
-					if (ext.equals(".jpg") || ext.equals(".jpeg")) {
-						mime = "image/jpeg";
-					}
-					else if (ext.equals(".png")) {
-						mime = "image/png";
-					}
-					else if (ext.equals(".gif")) {
-						mime = "image/gif";
-					}
-					else {
-						break;
+					String mime = "";
+					if (FileData.isImage(ext)) {
+						if (ext.equals(".jpg") || ext.equals(".jpeg")) {
+							mime = "image/jpeg";
+						}
+						else if (ext.equals(".png")) {
+							mime = "image/png";
+						}
+						else if (ext.equals(".gif")) {
+							mime = "image/gif";
+						}
+						else {
+							mime = "image/any";
+						}
 					}
 
 					// インテント起動
@@ -3655,7 +3643,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 			mSharpen = SetImageActivity.getSharpen(sharedPreferences);
 			mInvert = SetImageActivity.getInvert(sharedPreferences);
 			mGray = SetImageActivity.getGray(sharedPreferences);
-			mColoring = SetImageActivity.getColoring(sharedPreferences);
 			mMoire = SetImageActivity.getMoire(sharedPreferences);
 			mTopSingle = SetImageActivity.getTopSingle(sharedPreferences);
 

@@ -165,12 +165,11 @@ public class DownloadDialog extends Dialog implements Runnable, Handler.Callback
 				return false;
 			}
 			String ext = DEF.getFileExt(item);
-			if (!ext.equals(".jpg") && !ext.equals(".jpeg") && !ext.equals(".png") && !ext.equals(".zip") && !ext.equals(".rar") && !ext.equals(".cbz") && !ext.equals(".cbr") && !ext.equals(".pdf") && !ext.equals(".txt") && !ext.equals(".gif") && !ext.equals(".epub") && !ext.equals(".xhtml") && !ext.equals(".html")) {
+			if (!(FileData.isImage(ext) && FileData.isArchive(ext) && FileData.isText(ext))) {
 				// 対象外
 				return false;
 			}
 
-			/* || ext.equals(".bmp") || ext.equals(".gif") ) {*/
 			// ダウンロード実行
 			try {
 				OutputStream localFile = FileAccess.localOutputStream(mLocal + path + item + "_dl");

@@ -802,7 +802,7 @@ public class FileAccess {
 						exttype = FileData.EXTTYPE_GIF;
 					}
 				}
-				else if (ext.equals(".zip") || ext.equals(".rar") || ext.equals(".cbz") || ext.equals(".cbr") || ext.equals(".pdf") || ext.equals(".epub")) {
+				else if (FileData.isArchive(ext)) {
 					type = FileData.FILETYPE_ARC;
 					if (ext.equals(".zip") || ext.equals(".cbz") || ext.equals(".epub")) {
 						exttype = FileData.EXTTYPE_ZIP;
@@ -810,11 +810,8 @@ public class FileAccess {
 					else if (ext.equals(".rar") || ext.equals(".cbr")) {
 						exttype = FileData.EXTTYPE_RAR;
 					}
-					else {
-						exttype = FileData.EXTTYPE_PDF;
-					}
 				}
-				else if (ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) {
+				else if (FileData.isText(ext)) {
 					type = FileData.FILETYPE_TXT;
 					exttype = FileData.EXTTYPE_TXT;
 				}

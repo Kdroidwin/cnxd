@@ -150,4 +150,10 @@ public class FileData {
 	public static boolean isImage(String ext) {
 		return ext.equals(".jpg") || ext.equals(".jpeg") || ext.equals(".png") /*|| ext.equals(".gif")*/ || ext.equals(".webp") /*|| ext.equals(".avif") || ext.equals(".heif") || ext.equals(".jxl")*/;
 	}
+	public static boolean isArchive(String ext) {
+		return ext.equals(".zip") || ext.equals(".rar") || ext.equals(".cbz") || ext.equals(".cbr") || ext.equals(".epub");
+	}
+	public static boolean isText(String ext) {
+		return ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html");
+	}
 }

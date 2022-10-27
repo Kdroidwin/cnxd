@@ -317,24 +317,7 @@ JNIEXPORT jint JNICALL Java_src_comitton_stream_CallImgLibrary_ImageConvert (JNI
 	}
 
     if (setjmp(gJmpBuff) == 0) {
-		if (type == 4){
-#ifdef DEBUG
-			LOGD("ImageConvert : PDF-CCITT(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]);
-#endif
-			ret = LoadImageCCITT(&gImageData[gLoadPage], gLoadPage, scale, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], NULL, 0, 0);
-			if (ret == 0 && gLoadError) {
-				ret = -4;
-			}
-		}
-		else if (type == 5){
-#ifdef DEBUG
-			LOGD("ImageConvert : PDF-Flate(%d, %d, %d, %d)", p[0], p[1], p[2], p[3]);
-#endif
-			ret = LoadImageFlate(&gImageData[gLoadPage], gLoadPage, scale, p[0], p[1], p[2], p[3], NULL, 0, 0);
-			if (ret == 0 && gLoadError) {
-				ret = -4;
-			}
-		}
+		if (type == 4){}
 		else {
 			if (gLoadBuffer[6] == 'J' && gLoadBuffer[7] == 'F' && gLoadBuffer[8] == 'I' && gLoadBuffer[9] == 'F') {
 //				LOGD("ImageConvert : Judge - JPEG");
@@ -343,10 +326,6 @@ JNIEXPORT jint JNICALL Java_src_comitton_stream_CallImgLibrary_ImageConvert (JNI
 			else if (gLoadBuffer[1] == 'P' && gLoadBuffer[2] == 'N' && gLoadBuffer[3] == 'G') {
 //				LOGD("ImageConvert : Judge - PNG");
 				type = 2;
-			}
-			else if (gLoadBuffer[0] == 'G' && gLoadBuffer[1] == 'I' && gLoadBuffer[2] == 'F') {
-//				LOGD("ImageConvert : Judge - GIF");
-				type = 6;
 			}
 			else {
 //				LOGD("ImageConvert : Judge - ELSE(%d)", type);
@@ -366,14 +345,6 @@ JNIEXPORT jint JNICALL Java_src_comitton_stream_CallImgLibrary_ImageConvert (JNI
 			else if (type == 2){
 #ifdef HAVE_LIBPNG
 				ret = LoadImagePng(&gImageData[gLoadPage], gLoadPage, scale);
-#endif
-				if (ret == 0 && gLoadError) {
-					ret = -4;
-				}
-			}
-			else if (type == 6){
-#ifdef HAVE_LIBGIF
-				ret = LoadImageGif(&gImageData[gLoadPage], gLoadPage, scale);
 #endif
 				if (ret == 0 && gLoadError) {
 					ret = -4;
@@ -454,26 +425,7 @@ JNIEXPORT jint JNICALL Java_src_comitton_stream_CallImgLibrary_ImageConvertBitma
 		p = (jint*)env->GetIntArrayElements(paramArray, NULL);
 	}
 
-    if (setjmp(gJmpBuff) == 0) {
-		if (type == 4){
-#ifdef DEBUG
-			LOGD("ImageConvertBitmap : PDF-CCITT(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]);
-#endif
-			ret = LoadImageCCITT(NULL, gLoadPage, scale, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], (WORD*)canvas, info.stride / sizeof(WORD), info.height);
-			if (ret == 0 && gLoadError) {
-				ret = -4;
-			}
-		}
-		else if (type == 5){
-#ifdef DEBUG
-			LOGD("ImageConvertBitmap : PDF-Flate(%d, %d, %d, %d)", p[0], p[1], p[2], p[3]);
-#endif
-			ret = LoadImageFlate(NULL, gLoadPage, scale, p[0], p[1], p[2], p[3], (WORD*)canvas, info.stride / sizeof(WORD), info.height);
-			if (ret == 0 && gLoadError) {
-				ret = -4;
-			}
-		}
-	}
+    if (setjmp(gJmpBuff) == 0) {}
 	else {
 		ret = -1;
 	}

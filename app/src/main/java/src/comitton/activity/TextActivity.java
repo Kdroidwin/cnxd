@@ -14,6 +14,7 @@ import src.comitton.config.SetImageTextColorActivity;
 import src.comitton.config.SetImageTextDetailActivity;
 import src.comitton.config.SetNoiseActivity;
 import src.comitton.config.SetTextActivity;
+import src.comitton.data.FileData;
 import src.comitton.data.RecordItem;
 import src.comitton.data.TextDrawData;
 import src.comitton.dialog.BookmarkDialog;
@@ -33,7 +34,7 @@ import src.comitton.dialog.TextConfigDialog.TextConfigListenerInterface;
 import src.comitton.filelist.RecordList;
 import src.comitton.listener.PageSelectListener;
 import src.comitton.noise.NoiseSwitch;
-import src.comitton.pdf.data.PictureData;
+import src.comitton.data.PictureData;
 import src.comitton.stream.ImageManager;
 import src.comitton.stream.TextManager;
 import src.comitton.stream.TextManager.MidashiData;
@@ -447,7 +448,7 @@ public class TextActivity extends Activity implements OnTouchListener, Handler.C
 				if (path.length() > prev + 1) {
 					mPath = path.substring(0, prev + 1);
 					String ext = path.substring(path.length() - 4).toLowerCase();
-					if (ext.equals(".txt") || ext.equals(".xhtml") || ext.equals(".html")) {
+					if (FileData.isText(ext)) {
 						// 圧縮ファイル
 						mFileName = "";
 						mTextName = path.substring(prev + 1);
