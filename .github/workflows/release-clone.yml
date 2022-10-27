@@ -1,11 +1,36 @@
-
 name: Android Clone Release
 
 on:
-  push:
-    branches: [ "dev" ]
-  pull_request:
   workflow_dispatch:
+  workflow_call:
+  push:
+    branches:
+      - 'master'
+      - '*-dev'
+      - 'dev-*'
+    paths-ignore:
+      - '.idea/**'
+      - '.gitattributes'
+      - '.github/**.json'
+      - '.gitignore'
+      - '.gitmodules'
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
+  pull_request:
+    branches:
+      - 'master'
+      - '*-dev'
+      - 'dev-*'
+    paths-ignore:
+      - '.idea/**'
+      - '.gitattributes'
+      - '.github/**.json'
+      - '.gitignore'
+      - '.gitmodules'
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
 
 jobs:
   build:
@@ -21,11 +46,14 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     - name: Change package name
-      run: grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i 's/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g'
+      run: |
+        grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i 's/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g'
+        grep -l -r '<string name="app_name">ComittoNxA</string>' | xargs sed -i 's/ComittoNxA/ComittoNxD/g'
+        grep -l -r '<string name="app_launch_name">CNxA</string>' | xargs sed -i 's/CNxA/CNxD/g'
     - name: Build with Gradle
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: ./gradlew assembleRelease
+      run: ./gradlew clean assembleRelease
     - name: Sign APK
       id: sign_apk
       uses: r0adkll/sign-android-release@v1
@@ -38,5 +66,5 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-        name: comittonxa
+        name: Release apk
         path: ${{steps.sign_apk.outputs.signedReleaseFile}}

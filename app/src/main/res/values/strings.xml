@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">ComittoNxA</string>
+    <string name="app_launch_name">CNxA</string>
     <string name="noticeText">history.html</string>
     <string name="topMenu">Customized Menu</string>
     <string name="tguide00">Screen direction</string>
