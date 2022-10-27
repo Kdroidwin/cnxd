@@ -1,0 +1,64 @@
+name: Android Clone Release with versioning
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        type: string
+        required: true
+        description: 'Major numbering'
+      minor:
+        type: string
+        required: false
+        description: 'Minor numbering'
+      patch:
+        type: string
+        required: true
+        description: 'Patch numbering'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: gradle
+    - name: Change package name
+      run: |
+        grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i 's/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g'
+        grep -l -r '<string name="app_name">ComittoNxA</string>' | xargs sed -i 's/ComittoNxA/ComittoNxD/g'
+        grep -l -r '<string name="app_launch_name">CNxA</string>' | xargs sed -i 's/CNxA/CNxD/g' 
+    - name: Change version
+      run: |
+        grep -l -r 'def versionMajor = 1' | xargs sed -i "s/1/${MAJOR_NUMBER}/g"
+        grep -l -r 'def versionMinor = 65' | xargs sed -i "s/65/${MINOR_NUMBER}/g"
+        grep -l -r 'def versionPatch = 20' | xargs sed -i "s/20/${PATCH_NUMBER}/g"
+        grep -l -r 'def revision = "A"' | xargs sed -i "s/A/D/g"
+      env:
+        MAJOR_NUMBER: ${{ github.event.inputs.major }} 
+        MINOR_NUMBER: ${{ github.event.inputs.minor }}
+        PATCH_NUMBER: ${{ github.event.inputs.patch }}
+    - name: Build with Gradle
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: ./gradlew clean assembleRelease
+    - name: Sign APK
+      id: sign_apk
+      uses: r0adkll/sign-android-release@v1
+      with:
+        releaseDirectory: ./app/build/outputs/apk/release/
+        signingKeyBase64: ${{ secrets.SIGNING_KEYSTORE }}
+        keyStorePassword: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+        alias: ${{ secrets.SIGNING_KEY_ALIAS }}
+        keyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: Release apk
+        path: ${{steps.sign_apk.outputs.signedReleaseFile}}
