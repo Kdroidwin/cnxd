@@ -12,6 +12,7 @@
 #### Major Update
 
   - 画像形式Webpに対応([76a86f0](https://github.com/8cAyqpVKio/ComittoNxA/commit/76a86f007bb409b92f5d4061abd788e0cb83d31a)).
+  - 64bit形式に対応([afaf811](https://github.com/8cAyqpVKio/ComittoNxA/afaf811a7db2f312099cd1c0d0a80cd3382c8e02)).
 
 
 #### Minor Update
