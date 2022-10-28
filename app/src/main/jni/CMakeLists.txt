@@ -4,9 +4,13 @@ include(FetchContent)
 
 set(CMAKE_BUILD_TYPE Release)
 
-option(WITH_JPEG "Include JPEG decoder" ON)
 option(WITH_PNG "Include PNG decoder" ON)
-option(WITH_WEBP "Include WebP decoder" ON)
+if(!WIN32)
+  option(WITH_JPEG "Include JPEG decoder" ON)
+  option(WITH_WEBP "Include WebP decoder" ON)
+else()
+  message(STATUS "THIS OS IS NOT UNIX")
+endif()
 
 set(COMITTON_SOURCES
         comitton/ImageBlur.cpp
