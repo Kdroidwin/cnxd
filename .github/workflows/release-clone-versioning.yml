@@ -39,7 +39,7 @@ jobs:
         grep -l -r 'def versionMajor = 1' | xargs sed -i "s/def\ versionMajor\ =\ 1/def\ versionMajor\ =\ ${MAJOR_NUMBER}/g"
         grep -l -r 'def versionMinor = 65' | xargs sed -i "s/def\ versionMinor\ =\ 65/def\ versionMinor\ =\ ${MINOR_NUMBER}/g"
         grep -l -r 'def versionPatch = 20' | xargs sed -i "s/def\ versionPatch\ =\ 20/def\ versionPatch\ =\ ${PATCH_NUMBER}/g"
-        grep -l -r 'def revision = "A"' | xargs sed -i "s/def\ revision\ =\ \"A\"/def\ revision\ =\ \"\"/g"
+        grep -l -r '${versionMajor}.${versionMinor}${revision}${versionPatch}' | xargs sed -i "s/\${revision}/./g"
       env:
         MAJOR_NUMBER: ${{ github.event.inputs.major }} 
         MINOR_NUMBER: ${{ github.event.inputs.minor }}
