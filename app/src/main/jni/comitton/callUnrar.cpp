@@ -3,19 +3,8 @@
 #include <malloc.h>
 #include <string.h>
 #include <android/log.h>
-
 #include <stdio.h>
-
-#if 0	// COMITTONxT_MOD
-#include "../unrar/rar.hpp"
-#else
-#include "../unrar5/rar.hpp"
-#endif
-
-#define  LOG_TAG    "comittona"
-#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#include <unrar/rar.hpp>
 
 byte *ToBuff = NULL;
 byte *FromBuff = NULL;
@@ -277,3 +266,4 @@ JNIEXPORT void JNICALL Java_src_comitton_stream_CallJniLibrary_rarClose(JNIEnv *
 }
 
 }
+
