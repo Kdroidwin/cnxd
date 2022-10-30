@@ -2,37 +2,6 @@ name: Android Clone Release
 
 on:
   workflow_dispatch:
-  workflow_call:
-  push:
-    branches:
-      - 'master'
-      - 'dev'
-      - '*-dev'
-      - 'dev-*'
-    paths-ignore:
-      - '.idea/**'
-      - '.gitattributes'
-      - '.github/**.json'
-      - '.gitignore'
-      - '.gitmodules'
-      - '**.md'
-      - 'LICENSE'
-      - 'NOTICE'
-  pull_request:
-    branches:
-      - 'master'
-      - 'dev'
-      - '*-dev'
-      - 'dev-*'
-    paths-ignore:
-      - '.idea/**'
-      - '.gitattributes'
-      - '.github/**.json'
-      - '.gitignore'
-      - '.gitmodules'
-      - '**.md'
-      - 'LICENSE'
-      - 'NOTICE'
 
 jobs:
   build:
