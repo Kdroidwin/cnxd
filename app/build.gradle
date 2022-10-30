@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+
+def packageName = "jp.dip.muracoro.comittona"
 def applicationName = "ComittoNxA"
 def versionMajor = 1
 def versionMinor = 65
@@ -6,10 +8,11 @@ def versionPatch = 20
 def revision = "A"
 
 android {
+    namespace packageName
     compileSdkVersion 33
     ndkVersion "25.1.8937393"
     defaultConfig {
-        applicationId "jp.dip.muracoro.comittona"
+        applicationId packageName
         minSdkVersion 9
         targetSdkVersion 9 // 11以降でSMBまわりでNetworkOnMainThreadExceptionエラー発生
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
