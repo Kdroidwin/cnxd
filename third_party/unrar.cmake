@@ -17,7 +17,7 @@ file(
 
 file(MAKE_DIRECTORY "${SRC_DIR}")
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E tar xvf "${FILE_PATH}"
+  COMMAND ${CMAKE_COMMAND} -E tar xfz "${FILE_PATH}"
   WORKING_DIRECTORY "${SRC_DIR}"
 )
 
@@ -31,16 +31,10 @@ add_definitions(
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dangling-else -Wno-logical-op-parentheses -Wno-switch")
 set(PATCH_PATH "${CMAKE_CURRENT_SOURCE_DIR}/unrar.patch")
 
-#message(STATUS "PATCH_PATH: ${PATCH_PATH}")
-#set(PATCH_COMMAND "git apply \"${PATCH_PATH}\"")
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/unrar.patch DESTINATION ${SRC_DIR}/unrar)
-
 execute_process(
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/patch-unrar.sh "${PATCH_PATH}"
   WORKING_DIRECTORY "${SRC_DIR}/unrar"
 )
-
-include_directories(${SRC_DIR})
 
 set(
   UNRAR_SOURCES
@@ -61,6 +55,10 @@ set(
   ${SRC_DIR}/unrar/unpack.cpp
 )
 
-add_library(unrar_static STATIC ${UNRAR_SOURCES})
-target_link_libraries(comitton unrar_static)
+add_library(unrar STATIC ${UNRAR_SOURCES})
+# include_directories(${SRC_DIR})
 
+execute_process(
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/copy_headers.sh "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}include"
+  WORKING_DIRECTORY "${SRC_DIR}"
+)

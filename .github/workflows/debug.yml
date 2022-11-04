@@ -47,12 +47,17 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
+    - name: Build third-party static libraries
+      run: |
+        cd third_party
+        ./library_build.sh
+        cd ..
     - name: Build with Gradle
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ./gradlew assembleDebug
-    # - name: Upload APK
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: Debug APK
-    #     path: app/build/outputs/apk/debug/*.apk
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: Debug APK
+        path: app/build/outputs/apk/debug/*.apk
