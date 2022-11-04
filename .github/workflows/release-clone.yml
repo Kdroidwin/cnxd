@@ -16,6 +16,11 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
+    - name: Build third-party static libraries
+      run: |
+        cd third_party
+        ./library_build.sh
+        cd ..
     - name: Change package name
       run: |
         grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i "s/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g"
