@@ -1,12 +1,8 @@
-#include <time.h>
-#include <malloc.h>
-#include <string.h>
-#include <stdio.h>
-#include <setjmp.h>
+#include <cinttypes>
 #include <android/log.h>
+#include <cstdio>
+#include <cstdlib>
 #include <jpeglib.h>
-#include <jerror.h>
-
 #include "Image.h"
 
 extern char			*gLoadBuffer;
@@ -17,147 +13,43 @@ extern BUFFMNG		*gBuffMng;
 extern long			gBuffNum;
 
 extern int			gCancel;
-extern jmp_buf		gJmpBuff;
-
-extern "C"
-{
-//#define XMD_H
-}
-
-METHODDEF(void) memory_init_source (j_decompress_ptr cinfo);
-METHODDEF(boolean) memory_fill_input_buffer (j_decompress_ptr cinfo);
-METHODDEF(void) memory_skip_input_data (j_decompress_ptr cinfo, long num_bytes);
-METHODDEF(void) memory_term_source (j_decompress_ptr cinfo);
 
 extern char gDitherX_3bit[8][8];
 extern char gDitherX_2bit[4][4];
 extern char gDitherY_3bit[8];
 extern char gDitherY_2bit[4];
 
-static void _JpegError(j_common_ptr in_info)
-{
-	char	pszMessage[JMSG_LENGTH_MAX];
-
-	(*in_info->err->format_message)(in_info,pszMessage);
-
-	if (gCancel) {
-//		LOGD("JpegError : %s", pszMessage);
-	}
-	else {
-		LOGI("JpegError : %s", pszMessage);
-
-		gLoadError = 1;
-		// JPEG処理を抜ける
-		longjmp( gJmpBuff, 1 );
-	}
-}
-
-/* メモリソースからのJPEG展開用マネージャ */
-typedef struct {
-	struct jpeg_source_mgr pub;	/* public fields */
-
-	JOCTET * buffer;
-	unsigned long buffer_length;
-} memory_source_mgr;
-typedef memory_source_mgr *memory_src_ptr;
-
-
-GLOBAL(void)
-jpeg_memory_src (j_decompress_ptr cinfo, void* data, unsigned long len)
-{
-	memory_src_ptr src;
-
-	if (cinfo->src == NULL) {	/* first time for this JPEG object? */
-		cinfo->src = (struct jpeg_source_mgr *)(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof(memory_source_mgr));
-		src = (memory_src_ptr) cinfo->src;
-		src->buffer = (JOCTET *)(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, len * sizeof(JOCTET));
-	}
-
-	src = (memory_src_ptr) cinfo->src;
-
-	src->pub.init_source = memory_init_source;
-	src->pub.fill_input_buffer = memory_fill_input_buffer;
-	src->pub.skip_input_data = memory_skip_input_data;
-	src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
-	src->pub.term_source = memory_term_source;
-
-	src->pub.bytes_in_buffer = len;
-	src->pub.next_input_byte = (JOCTET*)data;
-}
-
-METHODDEF(void) memory_init_source (j_decompress_ptr cinfo)
-{
-	return;
-}
-
-
-METHODDEF(boolean) memory_fill_input_buffer (j_decompress_ptr cinfo)
-{
-	memory_src_ptr src = (memory_src_ptr)cinfo->src;
-
-	src->buffer[0] = (JOCTET) 0xFF;
-	src->buffer[1] = (JOCTET) JPEG_EOI;
-	src->pub.next_input_byte = src->buffer;
-	src->pub.bytes_in_buffer = 2;
-	return TRUE;
-}
-
-METHODDEF(void) memory_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
-{
-	memory_src_ptr src = (memory_src_ptr) cinfo->src;
-
-	if (num_bytes > 0) {
-		src->pub.next_input_byte += (size_t) num_bytes;
-		src->pub.bytes_in_buffer -= (size_t) num_bytes;
-	}
-}
-
-METHODDEF(void) memory_term_source (j_decompress_ptr cinfo)
-{
-	return;
-}
-
-int LoadImageJpeg(IMAGEDATA *pData, int page, int scale, int quality)
+int LoadImageJpeg(IMAGEDATA *pData, int page, int scale)
 {
 //	LOGI("Jpeg : start1(%d, %d)", page, quality);
 	/* Now fill the values with a nice little plasma */
-	int		yy, xx, sx, yd3, yd2;
-	int		rr, gg, bb;
-	
 
-	if (gLoadBuffer == NULL) {
+	if (gLoadBuffer == nullptr) {
 		LOGD("LoadImageJpeg : gLoadBuffer is null");
 		return -1;
 	}
 
-	jpeg_decompress_struct		in_info;
-	jpeg_error_mgr				jpeg_error;
-
+	jpeg_decompress_struct in_info{};
+	jpeg_error_mgr jpeg_error{};
 	JSAMPROW	buffer[1];
+    int yy, xx, sx, yd3, yd2;
+    int rr, gg, bb;
 
-	in_info.err = jpeg_std_error(&jpeg_error);		//エラーハンドラ設定
-	jpeg_error.error_exit = _JpegError;					//エラーハンドラ設定
+	in_info.err = jpeg_std_error(&jpeg_error); //エラーハンドラ設定
+	jpeg_error.error_exit = [](j_common_ptr in_info) {
+		char pszMessage[JMSG_LENGTH_MAX];
+		(*in_info->err->format_message)(in_info, pszMessage);
+		if (!gCancel) {
+			LOGE("LoadImageJpeg :JpegError[%s], abort()", pszMessage);
+			abort();
+		}
+	};
 
-	jpeg_create_decompress(&in_info);							//
-	jpeg_memory_src(&in_info, gLoadBuffer, gLoadFileSize);		//読込ファイル設定
-	jpeg_read_header(&in_info,TRUE);							//ヘッダー読込
-
-	if (quality == QUALITY_LOW) {
-		// 高速化
-		in_info.dct_method = JDCT_IFAST;
-		in_info.do_fancy_upsampling = FALSE;
-		in_info.dither_mode = JDITHER_NONE;	// 関係ないっぽいけど一応
-		in_info.two_pass_quantize    = FALSE;
-		in_info.quantize_colors      = FALSE;
-//		LOGI("Jpeg : Low");
-	}
-	else {
-		// 画質優先
-		in_info.dct_method = JDCT_ISLOW;
-		in_info.do_fancy_upsampling = TRUE;
-		in_info.dither_mode = JDITHER_FS;	// 関係ないっぽいけど一応
-//		LOGI("Jpeg : High");
-	}
+	jpeg_create_decompress(&in_info);
+	jpeg_mem_src(&in_info, (uint8_t*)gLoadBuffer, gLoadFileSize); //読込ファイル設定
+	jpeg_read_header(&in_info,true); //ヘッダー読込
+	in_info.out_color_space = JCS_RGB;
+	in_info.dither_mode = JDITHER_NONE;
 
 	// 倍率
 	in_info.scale_num = 1;
@@ -175,7 +67,7 @@ int LoadImageJpeg(IMAGEDATA *pData, int page, int scale, int quality)
 		scale /= 2;
 	}
 
-	jpeg_start_decompress(&in_info);					//デコードスタート
+	jpeg_start_decompress(&in_info); //デコードスタート
 
 	//JPEG 1ラインのバイト数
 	int width  = ROUNDUP_DIV(in_info.output_width, scale);

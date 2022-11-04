@@ -129,6 +129,6 @@ int CreateScaleCubic(int, int, int, int, int, int, int);
 int CreateScaleHalf(int, int, int, int, int);
 
 
-int LoadImageJpeg(IMAGEDATA *, int, int, int);
+int LoadImageJpeg(IMAGEDATA *, int, int);
 int LoadImagePng(IMAGEDATA *, int, int);
 int LoadImageWebp(IMAGEDATA *, int, int);

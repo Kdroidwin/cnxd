@@ -336,7 +336,7 @@ JNIEXPORT jint JNICALL Java_src_comitton_stream_CallImgLibrary_ImageConvert (JNI
 				LOGD("ImageConvert : JPEG - quality=%d", p[0]);
 #endif
 #ifdef HAVE_LIBJPEG
-				ret = LoadImageJpeg(&gImageData[gLoadPage], gLoadPage, scale, p[0]);
+				ret = LoadImageJpeg(&gImageData[gLoadPage], gLoadPage, scale);
 #endif
 				if (ret == 0 && gLoadError) {
 					ret = -4;
