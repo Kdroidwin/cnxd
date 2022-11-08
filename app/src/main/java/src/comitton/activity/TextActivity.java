@@ -497,7 +497,7 @@ public class TextActivity extends Activity implements OnTouchListener, Handler.C
 		// 続きから開く設定を記録
 		saveLastFile();
 
-		mRestorePage = mSharedPreferences.getInt(FileAccess.createUrl(mFilePath + mTextName, mUser, mPass), -1);
+		mRestorePage = mSharedPreferences.getInt(DEF.createUrl(mFilePath + mTextName, mUser, mPass), -1);
 		mCurrentPage = (mPage != -1) ? mPage : (mRestorePage != -1 ? mRestorePage : 0);
 		mTextView.setOnTouchListener(this);
 
@@ -2656,7 +2656,7 @@ public class TextActivity extends Activity implements OnTouchListener, Handler.C
 			// 範囲外は読み込みしない
 			savePage = 0;
 		}
-		ed.putInt(FileAccess.createUrl(mFilePath + mTextName, mUser, mPass), savePage);
+		ed.putInt(DEF.createUrl(mFilePath + mTextName, mUser, mPass), savePage);
 		ed.commit();
 	}
 
@@ -2666,10 +2666,10 @@ public class TextActivity extends Activity implements OnTouchListener, Handler.C
 			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 			Editor ed = sp.edit();
 			if (mRestorePage == -1) {
-				ed.remove(FileAccess.createUrl(mFilePath + mTextName, mUser, mPass));
+				ed.remove(DEF.createUrl(mFilePath + mTextName, mUser, mPass));
 			}
 			else {
-				ed.putInt(FileAccess.createUrl(mFilePath + mTextName, mUser, mPass), mRestorePage);
+				ed.putInt(DEF.createUrl(mFilePath + mTextName, mUser, mPass), mRestorePage);
 			}
 			ed.commit();
 		}

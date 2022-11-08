@@ -1,10 +1,8 @@
 package src.comitton.common;
 
-import android.content.SharedPreferences;
-import android.net.Uri;
+import android.content.Context;
 import android.os.Build;
-import android.preference.PreferenceManager;
-import android.support.v4.provider.DocumentFile;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.hierynomus.msdtyp.AccessMask;
@@ -26,7 +24,6 @@ import com.rapid7.client.dcerpc.transport.RPCTransport;
 import com.rapid7.client.dcerpc.transport.SMBTransportFactories;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import java.lang.SecurityException;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -52,8 +48,6 @@ import jcifs.smb.NtlmPasswordAuthenticator;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbRandomAccessFile;
-
-import src.comitton.activity.FileSelectActivity;
 
 import src.comitton.data.FileData;
 import src.comitton.exception.FileAccessException;
@@ -80,39 +74,12 @@ public class FileAccess {
 	private static String lastSessionUser = "";
 	private static String lastSessionPass = "";
 
-	private static FileSelectActivity mActivity;
-
-
-	public static void setActivity(FileSelectActivity activity) {
-		mActivity = activity;
-	}
-
 	public static int getSmbMode() {
 		return SMBLIB;
 	}
 
 	public static void setSmbMode(int smblib) {
 		SMBLIB = smblib;
-	}
-
-	// Url文字列作成
-	public static String createUrl(String url, String user, String pass) {
-		if (url == null) {
-			return "";
-		}
-		if (url.length() <= 6) {
-			return url;
-		}
-		if (url.substring(0, 6).equals("smb://") == false || user == null || user.length() == 0) {
-			return url;
-		}
-		// サーバ名
-		String ret = "smb://" + URLEncoder.encode(user);
-		if (pass != null && pass.length() > 0) {
-			ret += ":" + URLEncoder.encode(pass);
-		}
-		ret += "@" + url.substring(6);
-		return ret;
 	}
 
 //	// ユーザ認証付きSambaアクセス
@@ -387,52 +354,16 @@ public class FileAccess {
 		boolean result;
 		if (url.startsWith("/")) {
 			// ローカルの場合
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			try {
 				File orgfile = new File(url);
-				DocumentFile documentFile = FileAccess.getDocumentFile(orgfile, false);
-				Log.d("FileAccess", "localOutputStream documentfile=" + documentFile);
-
-				if (documentFile == null || !documentFile.exists()) {
+				if (!orgfile.exists()) {
 					// ファイルがなければ作成する
-					int idx = url.lastIndexOf("/");
-					if (idx > 0) {
-						String path = url.substring(0, idx);
-						String item = url.substring(idx + 1);
-						try {
-							documentFile = FileAccess.getDocumentFile(new File(path), true);
-							Log.d("FileAccess", "localOutputStream Parent=" + documentFile);
-							documentFile.createFile("*/*", item);
-							documentFile = FileAccess.getDocumentFile(orgfile, false);
-						Log.d("FileAccess", "localOutputStream createfile=" + documentFile);
-						} catch (Exception e) {
-							Log.e("FileAccess", "localOutputStream " + e.getMessage());
-							e.printStackTrace();
-						}
-					}
+					orgfile.createNewFile();
 				}
-				try {
-					return mActivity.getContentResolver().openOutputStream(documentFile.getUri(), "w");
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					e.printStackTrace();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				return new FileOutputStream(orgfile);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			else {
-				try {
-					File orgfile = new File(url);
-					if (!orgfile.exists()) {
-						// ファイルがなければ作成する
-						orgfile.createNewFile();
-					}
-					return new FileOutputStream(orgfile);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
 		}
 		return null;
 	}
@@ -611,27 +542,6 @@ public class FileAccess {
 			// ローカルの場合のファイル一覧取得
 			lfiles = new File(url).listFiles();
 			if (lfiles == null || lfiles.length == 0) {
-				if (url.equals("/storage/")) {
-					// Get emulated/0, SD card paths
-					for (String name: getExtSdCardPaths()) {
-						name = name.substring(9);
-						int index = name.indexOf("/");
-						if (index > 0) {
-							name = name.substring(0, index);
-						}
-						int len = name.length();
-						if (len >= 1 && !name.substring(len - 1).equals("/")) {
-							name += "/";
-						}
-						FileData fileData = new FileData();
-						fileData.setType(FileData.FILETYPE_DIR);
-						fileData.setExtType(FileData.EXTTYPE_NONE);
-						fileData.setName(name);
-						fileData.setSize(0);
-						fileData.setDate(0);
-						fileList.add(fileData);
-					}
-				}
 				return fileList;
 			}
 			length = lfiles.length;
@@ -871,30 +781,8 @@ public class FileAccess {
 				// 変更後ファイルが存在すればエラー
 				throw new FileAccessException("File access error.");
 			}
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				boolean isDirectory = fromfile.endsWith("/");
-				DocumentFile documentFile = FileAccess.getDocumentFile(orgfile, isDirectory);
-				Log.d("FileAccess", "renameTo documentfile=" + documentFile);
-
-				if (documentFile != null) {
-					// ファイルをリネームする。
-					try {
-						Log.d("FileAccess", "renameTo ファイルをリネームします。");
-
-						File dest = new File(tofile);
-						documentFile.renameTo(tofile);
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			else {
-				orgfile.renameTo(dstfile);
-				return dstfile.exists();
-			}
+			orgfile.renameTo(dstfile);
+			return dstfile.exists();
 		}
 		else if (SMBLIB == SMBLIB_JCIFS) {
 			// jcifsの場合
@@ -995,27 +883,7 @@ public class FileAccess {
 		if (url.startsWith("/")) {
 			// ローカルの場合
 			File orgfile = new File(url);
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				boolean isDirectory = url.endsWith("/");
-				DocumentFile documentFile = FileAccess.getDocumentFile(orgfile, isDirectory);
-				Log.d("FileAccess", "delete documentfile=" + documentFile);
-
-				if (documentFile != null) {
-					// ファイルを削除する。
-					try {
-						Log.d("FileAccess", "delete ファイルを削除します。");
-						documentFile.delete();
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			else {
-				orgfile.delete();
-			}
+			orgfile.delete();
 			return orgfile.exists();
 		}
 		else if (SMBLIB == SMBLIB_JCIFS) {
@@ -1071,34 +939,8 @@ public class FileAccess {
 		boolean result;
 		if (url.startsWith("/")) {
 			// ローカルの場合
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				boolean isDirectory = url.endsWith("/");
-				File orgfile = new File(url);
-				DocumentFile documentFile = FileAccess.getDocumentFile(orgfile, isDirectory);
-				Log.d("FileAccess", "mkdir documentfile=" + documentFile);
-				
-				if (documentFile != null) {
-					// ファイルを削除する。
-					try {
-						Log.d("FileAccess", "mkdir ディレクトリを削除します。 item=" + item);
-						DocumentFile ret = documentFile.createDirectory(item);
-						if (ret != null) {
-							return true;
-						}
-						else {
-							return false;
-						}
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			else {
-				File orgfile = new File(url + item);
-				return orgfile.mkdir();
-			}
+			File orgfile = new File(url + item);
+			return orgfile.mkdir();
 
 		}
 //		else {
@@ -1119,165 +961,34 @@ public class FileAccess {
 		return false;
 	}
 
-	public static boolean isPermit(final File file) {
-		String treeUriString = "";
-		Log.d("FileAccess", "isPermit START");
-		String baseFolder = getExtSdCardFolder(file);
-		Log.d("FileAccess", "isPermit baseFolder=" + baseFolder);
-
-		if (baseFolder == null) {
-			return true;
-		}
-
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
-
-		treeUriString = sharedPreferences.getString("permit-uri:" + baseFolder, "");
-		if (treeUriString != null && treeUriString.length() != 0) {
-			return true;
-		}
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			// Android ７以上なら
-			String[] parts = file.toString().substring(baseFolder.length() + 1).split("\\/");
-			for (int i = 0; i < parts.length; i++) {
-				baseFolder = baseFolder + "/" + parts[i];
-				Log.d("FileAccess", "isPermit baseFolder=" + baseFolder);
-				treeUriString = sharedPreferences.getString("permit-uri:" + baseFolder, "");
-				if (treeUriString != null && treeUriString.length() != 0) {
-					return true;
-				}
-			}
-
-		}
-		return false;
-	}
-
-
-	// treeUri(=ドライブのルート)のDocumentFileを取得する
-	// 書き込み許可が取得済みであれば、storage access frameworkのDocumentFileを返す
-	// 書き込み許可がまだであれば、nullを返す
-	public static DocumentFile getDocumentFile(final File file, final boolean isDirectory) {
-		Log.d("FileAccess", "getDocumentFile START");
-		DocumentFile document = null;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			// Android 10.0 なら
-			String baseFolder = getExtSdCardFolder(file);
-			Log.d("FileAccess", "getDocumentFile baseFolder=" + baseFolder);
-
-			if (baseFolder == null) {
-				return null;
-			}
-
-			String relativePath = null;
-			try {
-				String fullPath = file.getCanonicalPath();
-				relativePath = fullPath.substring(baseFolder.length() + 1);
-			} catch (IOException e) {
-				return null;
-			}
-
-			String treeUriString = "";
-			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mActivity);
-			treeUriString = sharedPreferences.getString("permit-uri:" + baseFolder, "");
-
-			if (treeUriString != null && treeUriString.length() != 0) {
-				Uri treeUri = Uri.parse(treeUriString);
-				if (treeUri == null) {
-					return null;
-				}
-				// start with root of SD card and then parse through document tree.
-				document = DocumentFile.fromTreeUri(mActivity, treeUri);
-			}
-
-			String[] parts = file.toString().substring(baseFolder.length() + 1).split("\\/");
-			for (int i = 0; i < parts.length; i++) {
-				if (treeUriString == null || treeUriString.length() == 0) {
-					baseFolder = baseFolder + "/" + parts[i];
-					Log.d("FileAccess", "getDocumentFile baseFolder=" + baseFolder);
-					treeUriString = sharedPreferences.getString("permit-uri:" + baseFolder, "");
-					if (treeUriString != null && treeUriString.length() != 0) {
-						Uri treeUri = Uri.parse(treeUriString);
-						if (treeUri == null) {
-							return null;
-						}
-						// start with root of SD card and then parse through document tree.
-						document = DocumentFile.fromTreeUri(mActivity, treeUri);
-					}
-				}
-				else {
-					Log.d("FileAccess", "getDocumentFile path=" + parts[i]);
-					DocumentFile nextDocument = document.findFile(parts[i]);
-
-					if (nextDocument == null) {
-						if ((i < parts.length - 1) || isDirectory) {
-							nextDocument = document.createDirectory(parts[i]);
-						} else {
-							nextDocument = document.createFile("*/*", parts[i]);
-						}
-					}
-					document = nextDocument;
-				}
-			}
-
-			if (document != null) {
-				return document;
-			}
-		}
-//		else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//			// Android 7 以上なら
-//			document = DocumentFile.fromFile(file);
-//		}
-		return document;
-	}
-
-	public static String getExtSdCardFolder(final File file) {
-		String[] extSdPaths = getExtSdCardPaths();
-
-		try {
-			for (int i = 0; i < extSdPaths.length; i++) {
-				if (file.getCanonicalPath().startsWith(extSdPaths[i])) {
-					return extSdPaths[i];
-				}
-			}
-		}
-		catch (IOException e) {
-			return null;
-		}
-		return null;
-	}
-
 	/**
 	 * Get a list of external SD card paths. (KitKat or higher.)
 	 *
 	 * @return A list of external SD card paths.
 	 */
-	private static String[] getExtSdCardPaths() {
+	@RequiresApi(Build.VERSION_CODES.KITKAT)
+	public static String[] getExtSdCardPaths(Context context) {
 		List<String> paths = new ArrayList<>();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			for (File file : mActivity.getExternalFilesDirs("external")) {
-//				if (file != null && !file.equals(mActivity.getExternalFilesDir("external"))) {
-				if (file != null) {
-					int index = file.getAbsolutePath().lastIndexOf("/Android/data");
-					if (index < 0) {
-						Log.w("FileAccess", "Unexpected external file dir: " + file.getAbsolutePath());
-					}
-					else {
-						String path = file.getAbsolutePath().substring(0, index);
-						try {
-							path = new File(path).getCanonicalPath();
-						}
-						catch (IOException e) {
-							// Keep non-canonical path.
-						}
-						paths.add(path);
-					}
+		for (File file : context.getExternalFilesDirs("external")) {
+//			if (file != null && !file.equals(mActivity.getExternalFilesDir("external"))) {
+			if (file != null) {
+				int index = file.getAbsolutePath().lastIndexOf("/Android/data");
+				if (index < 0) {
+					Log.w("FileAccess", "Unexpected external file dir: " + file.getAbsolutePath());
 				}
+				else {
+					String path = file.getAbsolutePath().substring(0, index);
+					try {
+						path = new File(path).getCanonicalPath();
+					}
+					catch (IOException e) {
+						// Keep non-canonical path.
+					}
+					paths.add(path);
+				}
+
 			}
 		}
 		return paths.toArray(new String[paths.size()]);
 	}
-
-
-
 }

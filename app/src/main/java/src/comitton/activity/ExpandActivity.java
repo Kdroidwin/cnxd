@@ -539,14 +539,14 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 					switch (mOperate[item]) {
 						case OPERATE_NONREAD: { // 未読にする
 							ed = mSharedPreferences.edit();
-							ed.remove(FileAccess.createUrl(mUri + mPath + mFileName + filedata.getName(), mUser, mPass));
+							ed.remove(DEF.createUrl(mUri + mPath + mFileName + filedata.getName(), mUser, mPass));
 							ed.commit();
 							updateListView();
 							break;
 						}
 						case OPERATE_READ: { // 既読にする
 							ed = mSharedPreferences.edit();
-							ed.putInt(FileAccess.createUrl(mUri + mPath + mFileName + filedata.getName(), mUser, mPass), -2);
+							ed.putInt(DEF.createUrl(mUri + mPath + mFileName + filedata.getName(), mUser, mPass), -2);
 							ed.commit();
 							updateListView();
 							break;
@@ -560,7 +560,7 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 							}
 
 							ed = mSharedPreferences.edit();
-							ed.putInt(FileAccess.createUrl(mUri + mPath + mFileName, mUser, mPass), state);
+							ed.putInt(DEF.createUrl(mUri + mPath + mFileName, mUser, mPass), state);
 							ed.commit();
 							updateListView();
 							break;
@@ -686,14 +686,14 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 							case CloseDialog.CLICK_NEXTTOP:
 							{
 								Editor ed = mSharedPreferences.edit();
-								ed.remove(FileAccess.createUrl(mUri + mPath + mFileName + nextfile.getName(), mUser, mPass));
+								ed.remove(DEF.createUrl(mUri + mPath + mFileName + nextfile.getName(), mUser, mPass));
 								ed.commit();
 								break;
 							}
 							case CloseDialog.CLICK_PREVLAST:
 							{
 								Editor ed = mSharedPreferences.edit();
-								ed.putInt(FileAccess.createUrl(mUri + mPath + mFileName + nextfile.getName(), mUser, mPass), -2);
+								ed.putInt(DEF.createUrl(mUri + mPath + mFileName + nextfile.getName(), mUser, mPass), -2);
 								ed.commit();
 								updateListView();
 								break;
@@ -764,7 +764,7 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 
 	private void loadListViewAfter() {
 		// しおり情報取得
-		mCurrentPage = mSharedPreferences.getInt(FileAccess.createUrl(mUri + mPath + mFileName, mUser, mPass), 0);
+		mCurrentPage = mSharedPreferences.getInt(DEF.createUrl(mUri + mPath + mFileName, mUser, mPass), 0);
 
 		// ファイルリスト
 		FileListItem files[] = mImageMgr.getList();
@@ -779,7 +779,7 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 			FileData data = new FileData();
 			int state = -1;
 			if (files[i].type == FILETYPE_TXT) {
-				state = mSharedPreferences.getInt(FileAccess.createUrl(mUri + mPath + mFileName + files[i].name, mUser, mPass), -1);
+				state = mSharedPreferences.getInt(DEF.createUrl(mUri + mPath + mFileName + files[i].name, mUser, mPass), -1);
 			}
 			else {
 				if (mCurrentPage == -2) {
@@ -823,7 +823,7 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 		}
 
 		// しおり情報取得
-		mCurrentPage = mSharedPreferences.getInt(FileAccess.createUrl(mUri + mPath + mFileName, mUser, mPass), 0);
+		mCurrentPage = mSharedPreferences.getInt(DEF.createUrl(mUri + mPath + mFileName, mUser, mPass), 0);
 
 		// ファイルリスト
 		int imageCnt = 0;
@@ -833,7 +833,7 @@ public class ExpandActivity extends ListActivity implements Handler.Callback, On
 
 			int state = -1;
 			if (data.getType() == FILETYPE_TXT) {
-				state = mSharedPreferences.getInt(FileAccess.createUrl(mUri + mPath + mFileName + data.getName(), mUser, mPass), -1);
+				state = mSharedPreferences.getInt(DEF.createUrl(mUri + mPath + mFileName + data.getName(), mUser, mPass), -1);
 			}
 			else {
 				if (mCurrentPage == -2) {

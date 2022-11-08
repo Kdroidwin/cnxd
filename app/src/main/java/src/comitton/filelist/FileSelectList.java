@@ -1,6 +1,5 @@
 package src.comitton.filelist;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,12 +9,11 @@ import src.comitton.common.FileAccess;
 import src.comitton.data.FileData;
 import src.comitton.dialog.LoadingDialog;
 
-import jcifs.smb.SmbFile;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -139,10 +137,32 @@ public class FileSelectList implements Runnable, Callback, DialogInterface.OnDis
 		mFileList = null;
 
 		try {
-
 			fileList = FileAccess.listFiles(mUri + mPath, mUser, mPass);
 			if (fileList.size() == 0) {
-				flag = true;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && (mUri + mPath).equals("/storage/")) {
+					// Get emulated/0, SD card paths
+					for (String _name: FileAccess.getExtSdCardPaths(mContext)) {
+						_name = _name.substring(9);
+						int index = _name.indexOf("/");
+						if (index > 0) {
+							_name = _name.substring(0, index);
+						}
+						int len = _name.length();
+						if (len >= 1 && !_name.substring(len - 1).equals("/")) {
+							_name += "/";
+						}
+						FileData fileData = new FileData();
+						fileData.setType(FileData.FILETYPE_DIR);
+						fileData.setExtType(FileData.EXTTYPE_NONE);
+						fileData.setName(_name);
+						fileData.setSize(0);
+						fileData.setDate(0);
+						fileList.add(fileData);
+					}
+				}
+				else {
+					flag = true;
+				}
 			}
 			
 			if (thread.isInterrupted()) {
@@ -197,7 +217,7 @@ public class FileSelectList implements Runnable, Callback, DialogInterface.OnDis
 				if (fileList.get(i).getType() == FileData.FILETYPE_DIR
 						|| fileList.get(i).getType() == FileData.FILETYPE_ARC
 						|| fileList.get(i).getType() == FileData.FILETYPE_TXT) {
-					state = mSp.getInt(FileAccess.createUrl(mUri + mPath + name, mUser, mPass), -1);
+					state = mSp.getInt(DEF.createUrl(mUri + mPath + name, mUser, mPass), -1);
 					fileList.get(i).setState(state);
 				}
 				if (fileList.get(i).getType() == FileData.FILETYPE_IMG){

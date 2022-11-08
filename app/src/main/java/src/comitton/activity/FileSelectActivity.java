@@ -264,10 +264,6 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 		mActivity = this;
 		mDensity = getResources().getDisplayMetrics().scaledDensity;
 		mInformation = new Information(this);
-		// jcifs.Config.setProperty("jcifs.util.loglevel", "0");
-
-		FileAccess.setActivity(mActivity);
-
 
 		// カメラボタンで縦横切替した場合
 		if (savedInstanceState != null) {
@@ -561,49 +557,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 			// リネームか削除かダウンロードのとき
 			Log.d("FileSelectActivity", "onActivityResult WRITE_REQUEST_CODE || REQUEST_SDCARD_ACCESS");
 
-			if (resultCode == RESULT_OK) {
-
-				Intent intent = null;
-
-				// IntentからtreeのURIを取得する
-				Uri treeUri = data.getData();
-				String treeUriDecodeString = "";
-				try {
-					treeUriDecodeString = URLDecoder.decode(treeUri.toString(), "UTF-8");
-					Log.d("FileSelectActivity", "onActivityResult result=OK Uri=" + treeUriDecodeString);
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-					// Android 7 以上なら
-
-					// 恒常的にPermissionを取得する。
-					Log.d("FileSelectActivity", "onActivityResult 恒常的にパーミッションを保存します。");
-					mActivity.getContentResolver().takePersistableUriPermission(treeUri,
-							Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-					// Permissionを取ったURIをアプリの設定に保存する
-					File file = new File(mServer.getPath(ServerSelect.INDEX_LOCAL));
-					// ボリュームのマウントされたフォルダを取得する
-					String baseFolder = FileAccess.getExtSdCardFolder(file);
-
-					// ユーザがアクセス許可したサブディレクトリを取得する
-					int idx = treeUriDecodeString.indexOf(":", 8);
-					if (idx > 0 && idx < treeUriDecodeString.length() - 1) {
-						baseFolder = baseFolder + "/" + treeUriDecodeString.substring(idx + 1); 
-					}
-					Log.d("FileSelectActivity", "onActivityResult result=OK baseFolder=" + baseFolder);
-
-					
-					// ボリュームのtreeUriを保存する
-					Editor ed = mSharedPreferences.edit();
-					ed.putString("permit-uri:" + baseFolder, treeUri.toString());
-					ed.commit();
-				}
-
-				onCreateDialog(mCommand);
-			}
+			if (resultCode == RESULT_OK) {}
 		}
 		else if (requestCode == DEF.REQUEST_SERVER) {
 			if (resultCode == RESULT_OK) {
@@ -730,7 +684,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 					Editor ed = mSharedPreferences.edit();
 					String user = mServer.getUser();
 					String pass = mServer.getPass();
-					ed.remove(FileAccess.createUrl(mURI + mPath + nextfile.getName(), user, pass));
+					ed.remove(DEF.createUrl(mURI + mPath + nextfile.getName(), user, pass));
 					ed.commit();
 					break;
 				}
@@ -739,7 +693,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 					Editor ed = mSharedPreferences.edit();
 					String user = mServer.getUser();
 					String pass = mServer.getPass();
-					ed.putInt(FileAccess.createUrl(mURI + mPath + nextfile.getName(), user, pass), -2);
+					ed.putInt(DEF.createUrl(mURI + mPath + nextfile.getName(), user, pass), -2);
 					ed.commit();
 					updateListView();
 					break;
@@ -1166,17 +1120,6 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 					ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
 				}
 
-				file = new File(mPath + mFileData.getName());
-				Log.d("FileSelectActivity", "onCreateDialog パーミッション取得済みか検査します。");
-				if (FileAccess.isPermit(file) == false) {
-					// ストレージ個別の承認が未取得
-					Log.d("FileSelectActivity", "onCreateDialog ストレージ書き込みの承認を取得します。");
-					mCommand = DEF.MESSAGE_FILE_DELETE;
-					if (startStorageAccessIntent(file, WRITE_REQUEST_CODE) == false) {
-						break;
-					}
-				}
-
 				dialogBuilder.setTitle("ファイル削除");
 				dialogBuilder.setMessage(R.string.delMsg);
 				dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -1265,16 +1208,6 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 					ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
 				}
 
-				file = new File(mServer.getPath(ServerSelect.INDEX_LOCAL));
-				Log.d("FileSelectActivity", "onCreateDialog パーミッション取得済みか検査します。");
-				if (FileAccess.isPermit(file) == false) {
-					// ストレージ個別の承認が未取得
-					Log.d("FileSelectActivity", "onCreateDialog ストレージ書き込みの承認を取得します。");
-					mCommand = DEF.MESSAGE_DOWNLOAD;
-					if (startStorageAccessIntent(file, WRITE_REQUEST_CODE) == false) {
-						break;
-					}
-				}
 				dialogBuilder.setTitle("Download");
 				dialogBuilder.setMessage("");
 				dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -1400,17 +1333,6 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 				if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 					//==== 承認要求を行う ====//
 					ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-				}
-
-				file = new File(mPath + mFileData.getName());
-				Log.d("FileSelectActivity", "onCreateDialog パーミッション取得済みか検査します。");
-				if (FileAccess.isPermit(file) == false) {
-					// ストレージ個別の承認が未取得
-					Log.d("FileSelectActivity", "onCreateDialog ストレージ書き込みの承認を取得します。");
-					mCommand = DEF.MESSAGE_FILE_RENAME;
-					if (startStorageAccessIntent(file, WRITE_REQUEST_CODE) == false) {
-						break;
-					}
 				}
 
 				// レイアウトの呼び出し
@@ -1972,7 +1894,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 				String name = data.getName();
 				int type = data.getType();
 				if (type == FileData.FILETYPE_ARC || type == FileData.FILETYPE_TXT || type == FileData.FILETYPE_DIR) {
-					int state = sharedPreferences.getInt(FileAccess.createUrl(path + name, user, pass), -1);
+					int state = sharedPreferences.getInt(DEF.createUrl(path + name, user, pass), -1);
 					data.setState(state);
 				}
 				boolean hit = false;
@@ -2492,7 +2414,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 						ed = mSharedPreferences.edit();
 						String user = mServer.getUser();
 						String pass = mServer.getPass();
-						ed.remove(FileAccess.createUrl(mURI + mPath + mFileData.getName(), user, pass));
+						ed.remove(DEF.createUrl(mURI + mPath + mFileData.getName(), user, pass));
 						ed.commit();
 						updateListView();
 						if (mOperate[item] == OPERATE_FIRST) {
@@ -2521,7 +2443,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 						ed = mSharedPreferences.edit();
 						String user = mServer.getUser();
 						String pass = mServer.getPass();
-						ed.putInt(FileAccess.createUrl(mURI + mPath + mFileData.getName(), user, pass), -2);
+						ed.putInt(DEF.createUrl(mURI + mPath + mFileData.getName(), user, pass), -2);
 						ed.commit();
 						updateListView();
 						break;
@@ -2719,7 +2641,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 								if (item == 3) {
 									String user = mServer.getUser();
 									String pass = mServer.getPass();
-									String uri = FileAccess.createUrl(mURI, user, pass).toLowerCase() + "/";
+									String uri = DEF.createUrl(mURI, user, pass).toLowerCase() + "/";
 									int urilen = uri.length();
 									if (key.length() < urilen) {
 										continue;
@@ -2778,7 +2700,7 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 							FileData data = files.get(i);
 							if (data.getType() == FileData.FILETYPE_ARC || data.getType() == FileData.FILETYPE_TXT || data.getType() == FileData.FILETYPE_DIR) {
 								// .zip又はディレクトリのしおり削除
-								String uri = FileAccess.createUrl(mURI + mPath + data.getName(), user, pass);
+								String uri = DEF.createUrl(mURI + mPath + data.getName(), user, pass);
 								ed.remove(uri);
 							}
 						}

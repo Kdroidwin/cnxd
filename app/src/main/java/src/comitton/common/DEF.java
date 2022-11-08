@@ -1,5 +1,6 @@
 package src.comitton.common;
 
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -1816,5 +1817,25 @@ public class DEF {
 		for (int i = 0; i < ste.length; i++) {
 			Log.d("", "" + ste[i]);
 		}
+	}
+
+	// Url文字列作成
+	public static String createUrl(String url, String user, String pass) {
+		if (url == null) {
+			return "";
+		}
+		if (url.length() <= 6) {
+			return url;
+		}
+		if (!url.startsWith("smb://") || user == null || user.length() == 0) {
+			return url;
+		}
+		// サーバ名
+		String ret = "smb://" + URLEncoder.encode(user);
+		if (pass != null && pass.length() > 0) {
+			ret += ":" + URLEncoder.encode(pass);
+		}
+		ret += "@" + url.substring(6);
+		return ret;
 	}
 }

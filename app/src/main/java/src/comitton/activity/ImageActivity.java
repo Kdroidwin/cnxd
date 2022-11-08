@@ -493,9 +493,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 
 		super.onCreate(savedInstanceState);
 
-		// JCIFSのログを出力しない
-		// jcifs.Config.setProperty("jcifs.util.loglevel", "0");
-
 		// タイトル非表示
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -626,16 +623,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 			mPass = intent.getStringExtra("Pass");
 			mFileName = intent.getStringExtra("File"); // ZIP指定時
 			mImageName = intent.getStringExtra("Image"); // 画像直接指定時
-
-			// String user = intent.getStringExtra("User");
-			// String pass = intent.getStringExtra("Pass");
-			// if (mPath.length() >= 6 && mPath.substring(0,
-			// 6).equals("smb://")) {
-			// Properties properties = new Properties();
-			// properties.setProperty("jcifs.smb.client.username", user);
-			// properties.setProperty("jcifs.smb.client.password", pass);
-			// jcifs.Config.setProperties(properties);
-			// }
 		}
 		if (mPath == null) {
 			// パスの設定がなければ終了
@@ -651,7 +638,7 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 
 		saveLastFile();
 
-		mRestorePage = mSharedPreferences.getInt(FileAccess.createUrl(mFilePath, mUser, mPass), -1);
+		mRestorePage = mSharedPreferences.getInt(DEF.createUrl(mFilePath, mUser, mPass), -1);
 		mCurrentPage = mRestorePage != -1 ? mRestorePage : 0;
 		mImageView.setOnTouchListener(this);
 
@@ -4178,7 +4165,7 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 				// 範囲外は読み込みしない
 				savePage = 0;
 			}
-			ed.putInt(FileAccess.createUrl(mFilePath, mUser, mPass), savePage);
+			ed.putInt(DEF.createUrl(mFilePath, mUser, mPass), savePage);
 			ed.commit();
 		}
 	}
@@ -4189,10 +4176,10 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 			Editor ed = sp.edit();
 			if (mRestorePage == -1) {
-				ed.remove(FileAccess.createUrl(mFilePath, mUser, mPass));
+				ed.remove(DEF.createUrl(mFilePath, mUser, mPass));
 			}
 			else {
-				ed.putInt(FileAccess.createUrl(mFilePath, mUser, mPass), mRestorePage);
+				ed.putInt(DEF.createUrl(mFilePath, mUser, mPass), mRestorePage);
 			}
 			ed.commit();
 		}
