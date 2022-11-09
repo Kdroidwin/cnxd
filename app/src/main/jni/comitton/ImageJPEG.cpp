@@ -32,8 +32,8 @@ int LoadImageJpeg(IMAGEDATA *pData, int page, int scale)
 	jpeg_decompress_struct in_info{};
 	jpeg_error_mgr jpeg_error{};
 	JSAMPROW	buffer[1];
-    int yy, xx, sx, yd3, yd2;
-    int rr, gg, bb;
+	int yy, xx, sx, yd3, yd2;
+	int rr, gg, bb;
 
 	in_info.err = jpeg_std_error(&jpeg_error); //エラーハンドラ設定
 	jpeg_error.error_exit = [](j_common_ptr in_info) {
@@ -79,7 +79,7 @@ int LoadImageJpeg(IMAGEDATA *pData, int page, int scale)
 	pData->OrgHeight = height;
 
 #ifdef DEBUG
- 	LOGD("LoadImageJpeg : scl=%d, sn=%d, sd=%d, w=%d, h=%d, sw=%d, sh=%d, comp=%d", scale, in_info.scale_num, in_info.scale_denom, in_info.output_width, in_info.output_height, width, height, components);
+	LOGD("LoadImageJpeg : scl=%d, sn=%d, sd=%d, w=%d, h=%d, sw=%d, sh=%d, comp=%d", scale, in_info.scale_num, in_info.scale_denom, in_info.output_width, in_info.output_height, width, height, components);
 #endif
 
 	int buffsize = in_info.output_width * components + 10;
