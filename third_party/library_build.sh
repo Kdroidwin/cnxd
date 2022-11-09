@@ -60,6 +60,6 @@ ANDROID_MINSDK_VERSION="9"
 #build_for_android x86 android-${ANDROID_MINSDK_VERSION} debug
 #build_for_android x86_64 android-${ANDROID_MINSDK_VERSION} debug
 #build_for_android armeabi-v7a android-${ANDROID_MINSDK_VERSION} release
-build_for_android arm64-v8a android-${ANDROID_MINSDK_VERSION} release
-build_for_android x86 android-${ANDROID_MINSDK_VERSION} release
+build_for_android arm64-v8a android-21 release
+build_for_android x86 android-19 release
 #build_for_android x86_64 android-${ANDROID_MINSDK_VERSION} release
