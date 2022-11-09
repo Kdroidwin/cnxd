@@ -2,23 +2,17 @@ set(UNRAR_VERSION "6.2.1")
 set(UNRAR_HASH_SHA256 "5cc8f7ded262d27c29d01e7a119d2fd23edda427711820454f2eb667044a8900")
 
 set(FILE_NAME "unrarsrc-${UNRAR_VERSION}.tar.gz")
-set(URL "https://www.rarlab.com/rar/${FILE_NAME}")
-set(DEPS_PATH "${CMAKE_CURRENT_BINARY_DIR}/_deps")
-set(FILE_PATH "${DEPS_PATH}/${FILE_NAME}")
-set(SRC_DIR "${DEPS_PATH}/unrar-src")
-
-file(MAKE_DIRECTORY "${DEPS_PATH}")
-file(
-  DOWNLOAD
-  "${URL}"
-  "${FILE_PATH}"
-  EXPECTED_HASH SHA256=${UNRAR_HASH_SHA256}
+FetchContent_Declare(
+  unrar
+  URL      https://www.rarlab.com/rar/${FILE_NAME}
+  URL_HASH SHA256=${UNRAR_HASH_SHA256}
+  DOWNLOAD_NO_EXTRACT true
 )
+FetchContent_MakeAvailable(unrar)
 
-file(MAKE_DIRECTORY "${SRC_DIR}")
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E tar xfz "${FILE_PATH}"
-  WORKING_DIRECTORY "${SRC_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E tar xfz ${FILE_NAME}
+  WORKING_DIRECTORY "${unrar_SOURCE_DIR}"
 )
 
 add_definitions(
@@ -33,32 +27,31 @@ set(PATCH_PATH "${CMAKE_CURRENT_SOURCE_DIR}/unrar.patch")
 
 execute_process(
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/patch-unrar.sh "${PATCH_PATH}"
-  WORKING_DIRECTORY "${SRC_DIR}/unrar"
+  WORKING_DIRECTORY "${unrar_SOURCE_DIR}/unrar"
 )
 
 set(
   UNRAR_SOURCES
-  ${SRC_DIR}/unrar/blake2s.cpp
-  ${SRC_DIR}/unrar/crc.cpp
-  ${SRC_DIR}/unrar/crypt.cpp
-  ${SRC_DIR}/unrar/getbits.cpp
-  ${SRC_DIR}/unrar/hash.cpp
-  ${SRC_DIR}/unrar/rarvm.cpp
-  ${SRC_DIR}/unrar/rdwrfn.cpp
-  ${SRC_DIR}/unrar/rijndael.cpp
-  ${SRC_DIR}/unrar/secpassword.cpp
-  ${SRC_DIR}/unrar/sha1.cpp
-  ${SRC_DIR}/unrar/sha256.cpp
-  ${SRC_DIR}/unrar/strfn.cpp
-  ${SRC_DIR}/unrar/timefn.cpp
-  ${SRC_DIR}/unrar/unicode.cpp
-  ${SRC_DIR}/unrar/unpack.cpp
+  ${unrar_SOURCE_DIR}/unrar/blake2s.cpp
+  ${unrar_SOURCE_DIR}/unrar/crc.cpp
+  ${unrar_SOURCE_DIR}/unrar/crypt.cpp
+  ${unrar_SOURCE_DIR}/unrar/getbits.cpp
+  ${unrar_SOURCE_DIR}/unrar/hash.cpp
+  ${unrar_SOURCE_DIR}/unrar/rarvm.cpp
+  ${unrar_SOURCE_DIR}/unrar/rdwrfn.cpp
+  ${unrar_SOURCE_DIR}/unrar/rijndael.cpp
+  ${unrar_SOURCE_DIR}/unrar/secpassword.cpp
+  ${unrar_SOURCE_DIR}/unrar/sha1.cpp
+  ${unrar_SOURCE_DIR}/unrar/sha256.cpp
+  ${unrar_SOURCE_DIR}/unrar/strfn.cpp
+  ${unrar_SOURCE_DIR}/unrar/timefn.cpp
+  ${unrar_SOURCE_DIR}/unrar/unicode.cpp
+  ${unrar_SOURCE_DIR}/unrar/unpack.cpp
 )
 
 add_library(unrar STATIC ${UNRAR_SOURCES})
-# include_directories(${SRC_DIR})
 
 execute_process(
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/copy_headers.sh "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}include"
-  WORKING_DIRECTORY "${SRC_DIR}"
+  WORKING_DIRECTORY "${unrar_SOURCE_DIR}"
 )
