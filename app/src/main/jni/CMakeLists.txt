@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
-project(comitton C CXX ASM)
+project(comitton CXX)
 include(FetchContent)
 
 set(CMAKE_BUILD_TYPE Release)
@@ -9,7 +9,7 @@ option(WITH_JPEG "Include JPEG decoder" ON)
 option(WITH_WEBP "Include WebP decoder" ON)
 
 set(LIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party)
-set(LIB_DIR ${LIB_ROOT}/prebuilt/release/${CMAKE_ANDROID_ARCH_ABI})
+set(LIB_DIR ${LIB_ROOT}/prebuilt/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}/lib)
 
 set(
   COMITTON_SOURCES
@@ -81,13 +81,7 @@ if(WITH_WEBP)
     PROPERTIES
     IMPORTED_LOCATION ${LIB_DIR}/libwebpdecoder.a
   )
-  add_library(webpdemux-static STATIC IMPORTED)
-  set_target_properties(
-    webpdemux-static
-    PROPERTIES
-    IMPORTED_LOCATION ${LIB_DIR}/libwebpdemux.a
-  )
-  target_link_libraries(comitton webpdecoder-static webpdemux-static)
+  target_link_libraries(comitton webpdecoder-static)
 endif()
 if(WITH_AVIF)
 # TODO: add AVIF support
@@ -100,5 +94,5 @@ if(WITH_JXL)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${LIB_DIR}/include)
+include_directories(${LIB_DIR}/../include)
 target_link_libraries(comitton android jnigraphics log z)

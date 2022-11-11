@@ -14,12 +14,3 @@ option(WITH_TURBOJPEG "" OFF)
 FetchContent_MakeAvailable(libjpeg-turbo)
 add_library(libjpeg-turbo INTERFACE)
 target_include_directories(libjpeg-turbo INTERFACE ${libjpeg-turbo_BINARY_DIR} ${libjpeg-turbo_SOURCE_DIR})
-
-execute_process(
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/copy_headers.sh "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}include"
-  WORKING_DIRECTORY "${libjpeg-turbo_SOURCE_DIR}"
-)
-execute_process(
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/copy_headers.sh "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}include"
-  WORKING_DIRECTORY "${libjpeg-turbo_BINARY_DIR}"
-)

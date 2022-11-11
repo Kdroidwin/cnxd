@@ -50,8 +50,16 @@ set(
 )
 
 add_library(unrar STATIC ${UNRAR_SOURCES})
+include_directories(${unrar_SOURCE_DIR})
+file(GLOB_RECURSE UNRAR_HEADERS CONFIGURE_DEPENDS "${unrar_SOURCE_DIR}/unrar/*.hpp")
 
-execute_process(
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/copy_headers.sh "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}include"
-  WORKING_DIRECTORY "${unrar_SOURCE_DIR}"
+install(
+  FILES ${UNRAR_HEADERS}
+  DESTINATION include/unrar
+)
+
+install(
+  TARGETS unrar
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
 )
