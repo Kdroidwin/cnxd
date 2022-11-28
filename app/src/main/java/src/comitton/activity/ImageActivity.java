@@ -232,7 +232,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 	private int mScrlRngH;
 	private int mMgnCut;
 	private int mEffect;
-	private int mQuality;
 	private int mLastMsg;
 	private int mPageSelect;
 	private int mMomentMode;
@@ -1737,7 +1736,7 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 	private void setMgrConfig(boolean scaleinit) {
 		if (mImageMgr != null) {
 			mImageMgr.setConfig(mScaleMode, mCenter, mFitDual, mDispMode, mNoExpand, mAlgoMode, mRotate, mWAdjust
-					, mWidthScale, mImgScale, mPageWay, mMgnCut, mQuality, mBright, mGamma, mSharpen, mInvert, mGray, mPseLand, mMoire, mTopSingle, scaleinit);
+					, mWidthScale, mImgScale, mPageWay, mMgnCut, 0, mBright, mGamma, mSharpen, mInvert, mGray, mPseLand, mMoire, mTopSingle, scaleinit);
 		}
 		// モードが変わればスケールは初期化
 		if (scaleinit) {
@@ -3578,7 +3577,6 @@ public class ImageActivity extends Activity implements OnTouchListener, Handler.
 			mViewPoint = SetImageText.getViewPt(sharedPreferences);
 			mScaleMode = SetImageActivity.getIniScale(sharedPreferences);
 			mEffect = SetImageActivity.getEffect(sharedPreferences);
-			mQuality = SetImageActivity.getQuality(sharedPreferences);
 
 			mScroll = DEF.calcScroll(SetImageTextDetailActivity.getScroll(sharedPreferences));
 			mClickArea = DEF.calcClickAreaPix(SetImageTextDetailActivity.getClickArea(sharedPreferences), mSDensity);

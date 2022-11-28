@@ -106,9 +106,6 @@ public class SetImageActivity extends PreferenceActivity implements OnSharedPref
 		, R.string.effect01		// フリップ
 		, R.string.effect02		// フェードイン
 		, R.string.effect03 };	// スクロール
-	public static final int QualityName[] =
-		{ R.string.quality00	// 速度優先
-		, R.string.quality01 };	// 画質優先
 	public static final int PnumFormatName[] =
 		{ R.string.pnumformat00		// page / total
 		, R.string.pnumformat01 };	// page1-2 / total
@@ -205,8 +202,6 @@ public class SetImageActivity extends PreferenceActivity implements OnSharedPref
 		mMgnCut.setSummary(getMgnCutSummary(sharedPreferences));		// 余白削除
 		mEffect.setSummary(getEffectSummary(sharedPreferences));		// エフェクト
 
-		mQuality.setSummary(getQualitySummary(sharedPreferences));		// 画質と速度
-
 		mTapPattern.setSummary(SetImageText.getTapPatternSummary(mResources, sharedPreferences));	// 操作パターン
 		mPageNumber.setSummary(getPageNumberSummary(sharedPreferences));	// ページ表示
 
@@ -266,10 +261,6 @@ public class SetImageActivity extends PreferenceActivity implements OnSharedPref
 		else if(key.equals(DEF.KEY_EFFECTLIST)){
 			//
 			mEffect.setSummary(getEffectSummary(sharedPreferences));
-		}
-		else if(key.equals(DEF.KEY_QUALITY)){
-			//
-			mQuality.setSummary(getQualitySummary(sharedPreferences));
 		}
 		else if(key.equals(DEF.KEY_TAPPATTERN) || key.equals(DEF.KEY_TAPRATE)){
 			//
@@ -369,14 +360,6 @@ public class SetImageActivity extends PreferenceActivity implements OnSharedPref
 	public static int getEffect(SharedPreferences sharedPreferences){
 		int val = DEF.getInt(sharedPreferences, DEF.KEY_EFFECTLIST, "1");
 		if( val < 0 || val > EffectName.length){
-			val = 1;
-		}
-		return val;
-	}
-
-	public static int getQuality(SharedPreferences sharedPreferences){
-		int val = DEF.getInt(sharedPreferences, DEF.KEY_QUALITY, DEF.DEFAULT_QUALITY);
-		if( val < 0 || val >= QualityName.length){
 			val = 1;
 		}
 		return val;
@@ -618,12 +601,6 @@ public class SetImageActivity extends PreferenceActivity implements OnSharedPref
 		int val = getEffect(sharedPreferences);
 		Resources res = getResources();
 		return res.getString(EffectName[val]);
-	}
-
-	private String getQualitySummary(SharedPreferences sharedPreferences){
-		int val = getQuality(sharedPreferences);
-		Resources res = getResources();
-		return res.getString(QualityName[val]);
 	}
 
 	private String getPageNumberSummary(SharedPreferences sharedPreferences){
