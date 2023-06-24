@@ -29,11 +29,10 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-    - name: Set up Gradle
-      run: ./gradlew wrapper
     - name: Change package name
       run: |
         grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i "s/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g"
+        grep -l -r 'https://github.com/ComittoNxA/ComittoNxA' | xargs sed -i "s/ComittoNxA\/ComittoNxA/8cAyqpVKio\/cnxd/g"
         grep -l -r '<string name="app_name">ComittoNxA</string>' | xargs sed -i "s/<string name=\"app_name\">ComittoNxA<\/string>/<string name=\"app_name\">ComittoNxD<\/string>/g"
         grep -l -r '<string name="app_launch_name">CNxA</string>' | xargs sed -i "s/<string name=\"app_launch_name\">CNxA<\/string>/<string name=\"app_launch_name\">CNxD<\/string>/g"
     - name: Change version
@@ -46,6 +45,8 @@ jobs:
         MAJOR_NUMBER: ${{ github.event.inputs.major }} 
         MINOR_NUMBER: ${{ github.event.inputs.minor }}
         PATCH_NUMBER: ${{ github.event.inputs.patch }}
+    - name: Set up Gradle
+      run: ./gradlew wrapper
     - name: Build with Gradle
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

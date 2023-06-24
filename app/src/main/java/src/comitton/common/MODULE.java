@@ -4,21 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import jp.dip.muracoro.comittona.R;
+import jp.dip.muracoro.comittona.BuildConfig;
 
 public class MODULE {
-	public static final String ABOUT_TITLE = "ComittoNxA";
-	public static final String ABOUT_INFO = "\nLast Update : 2020/10/23\n  Version 1.65A20\n\n"
+	public static String aboutTitle(Context context) {
+		return context.getString(R.string.app_name);
+	}
+	public static final String ABOUT_INFO = "\nLast Update : 2023/06/24\n  Version "
+			+ BuildConfig.VERSION_NAME + "\n\n"
 			+ "Special thanks!!\n  Icon Designed by Sigeyuki Koresawa\n\n\n"
 			+ "Using Library\n"
-			+ "  jcifs-ng 2.1.5 (LGPL v2.1)\n"
-			+ "  unrar 5.6.4\n"
-			+ "  mupdf 1.1 (GPL v3)\n"
-			+ "  libjpg-turbo\n"
-			+ "  libpng\n"
-			+ "  giflib\n"
-			+ "  zlib\n"
-			+ "  AndroidSVG 1.4 (ASL v2.0)\n"
-			+ "  Automatic coloring algorithm(GPL)\n";
+			+ "  jcifs 2.1.35 (LGPL v2.1)\n"
+			+ "  unrar 6.2.1\n"
+			+ "  libjpg-turbo 2.1.5.1\n"
+			+ "  libpng 1.6.40\n"
+			+ "  AndroidSVG 1.4 (ASL v2.0)\n";
 
 	public static boolean isFree() {
 		// false:有料版、true:無料版

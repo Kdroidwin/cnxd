@@ -172,7 +172,7 @@ public class Information implements DialogInterface.OnDismissListener {
 		public AboutDialog(Context context) {
 			super(context);
 			setIcon(R.drawable.icon);
-			setTitle(MODULE.ABOUT_TITLE);
+			setTitle(MODULE.aboutTitle(mContext));
 			setMessage(MODULE.ABOUT_INFO);
 			setButton(context.getResources().getString(MODULE.getAboutOk()),
 					new DialogInterface.OnClickListener() {
