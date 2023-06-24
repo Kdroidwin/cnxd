@@ -1,7 +1,7 @@
 FetchContent_Declare(
   libwebp
   GIT_REPOSITORY https://github.com/webmproject/libwebp
-  GIT_TAG        v1.2.4
+  GIT_TAG        v1.3.0
 )
 
 option(BUILD_SHARED_LIBS "" OFF)
@@ -18,5 +18,5 @@ option(WEBP_BUILD_WEBP_JS "" OFF)
 option(WEBP_ENABLE_SWAP_16BIT_CSP "" ON)
 
 FetchContent_MakeAvailable(libwebp)
-add_library(libwebp INTERFACE)
-target_include_directories(libwebp INTERFACE ${libwebp_BINARY_DIR} ${libwebp_SOURCE_DIR})
+target_include_directories(comitton PRIVATE ${libwebp_BINARY_DIR} ${libwebp_SOURCE_DIR})
+target_link_libraries(comitton webpdecoder)

@@ -31,8 +31,6 @@ jobs:
         cache: gradle
     - name: Set up Gradle
       run: ./gradlew wrapper
-    - name: Build third-party libraries
-      run: ./deps.sh
     - name: Change package name
       run: |
         grep -l -r 'jp.dip.muracoro.comittona' | xargs sed -i "s/jp.dip.muracoro.comittona/jp.dip.muracoro.comittona.by_8cAyqpVKio/g"

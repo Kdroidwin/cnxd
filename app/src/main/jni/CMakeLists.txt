@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.22.1)
-project(comitton CXX)
+project(comitton C CXX ASM)
 include(FetchContent)
+include(GNUInstallDirs)
 
 set(CMAKE_BUILD_TYPE Release)
 
-option(WITH_PNG "Include PNG decoder" ON)
 option(WITH_JPEG "Include JPEG decoder" ON)
+option(WITH_PNG "Include PNG decoder" ON)
 option(WITH_WEBP "Include WebP decoder" ON)
-
-set(LIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party)
-set(LIB_DIR ${LIB_ROOT}/prebuilt/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}/lib)
 
 set(
   COMITTON_SOURCES
@@ -38,50 +36,26 @@ add_library(
   ${COMITTON_SOURCES}
 )
 
-add_library(unrar-static STATIC IMPORTED)
-set_target_properties(
-  unrar-static
-  PROPERTIES
-  IMPORTED_LOCATION ${LIB_DIR}/libunrar.a
-)
-target_link_libraries(comitton unrar-static)
+add_subdirectory(unrar)
 target_sources(comitton PRIVATE comitton/callUnrar.cpp)
 
 if(WITH_JPEG)
   add_definitions(-DHAVE_LIBJPEG)
+  add_subdirectory(libjpeg-turbo)
   target_sources(comitton PRIVATE comitton/ImageJPEG.cpp)
-  add_library(jpeg-static STATIC IMPORTED)
-  set_target_properties(
-    jpeg-static
-    PROPERTIES
-    IMPORTED_LOCATION ${LIB_DIR}/libjpeg.a
-  )
-  target_link_libraries(comitton jpeg-static)
 endif()
 if(WITH_PNG)
   add_definitions(-DHAVE_LIBPNG)
+  add_subdirectory(libpng)
   target_sources(comitton PRIVATE comitton/ImagePNG.cpp)
-  add_library(png-static STATIC IMPORTED)
-  set_target_properties(
-    png-static
-    PROPERTIES
-    IMPORTED_LOCATION ${LIB_DIR}/libpng16.a
-  )
-  target_link_libraries(comitton png-static)
 endif()
 if(WITH_GIF)
 # TODO: add Gif support
 endif()
 if(WITH_WEBP)
   add_definitions(-DHAVE_LIBWEBP)
+  add_subdirectory(libwebp)
   target_sources(comitton PRIVATE comitton/ImageWebP.cpp)
-  add_library(webpdecoder-static STATIC IMPORTED)
-  set_target_properties(
-    webpdecoder-static
-    PROPERTIES
-    IMPORTED_LOCATION ${LIB_DIR}/libwebpdecoder.a
-  )
-  target_link_libraries(comitton webpdecoder-static)
 endif()
 if(WITH_AVIF)
 # TODO: add AVIF support
@@ -94,5 +68,4 @@ if(WITH_JXL)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${LIB_DIR}/../include)
-target_link_libraries(comitton android jnigraphics log z)
+target_link_libraries(comitton android jnigraphics log)

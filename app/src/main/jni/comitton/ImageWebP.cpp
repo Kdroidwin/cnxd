@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <android/log.h>
-#include <webp/decode.h>
+#include <src/webp/decode.h>
 
 #include "Image.h"
 

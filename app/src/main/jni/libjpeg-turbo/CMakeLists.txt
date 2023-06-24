@@ -1,7 +1,7 @@
 FetchContent_Declare(
   libjpeg-turbo
   GIT_REPOSITORY https://github.com/libjpeg-turbo/libjpeg-turbo
-  GIT_TAG        2.1.4
+  GIT_TAG        2.1.5.1
 )
 
 option(ENABLE_SHARED "" OFF)
@@ -12,5 +12,5 @@ option(WITH_JPEG8 "" ON)
 option(WITH_TURBOJPEG "" OFF)
 
 FetchContent_MakeAvailable(libjpeg-turbo)
-add_library(libjpeg-turbo INTERFACE)
-target_include_directories(libjpeg-turbo INTERFACE ${libjpeg-turbo_BINARY_DIR} ${libjpeg-turbo_SOURCE_DIR})
+target_include_directories(comitton PRIVATE ${libjpeg-turbo_BINARY_DIR} ${libjpeg-turbo_SOURCE_DIR})
+target_link_libraries(comitton jpeg-static)

@@ -12,7 +12,7 @@ def revision = "A"
 android {
     namespace packageName
     compileSdkVersion 33
-    ndkVersion "25.1.8937393"
+    ndkVersion "25.2.9519653"
     defaultConfig {
         applicationId packageName
         minSdkVersion 9
