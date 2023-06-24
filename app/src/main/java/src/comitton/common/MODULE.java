@@ -18,6 +18,7 @@ public class MODULE {
 			+ "  unrar 6.2.1\n"
 			+ "  libjpg-turbo 2.1.5.1\n"
 			+ "  libpng 1.6.40\n"
+			+ "  libwebp 1.3.0\n"
 			+ "  AndroidSVG 1.4 (ASL v2.0)\n";
 
 	public static boolean isFree() {
