@@ -47,6 +47,8 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
+    - name: Set up Gradle
+      run: ./gradlew wrapper
     - name: Build third-party libraries
       run: ./deps.sh
     - name: Build with Gradle
