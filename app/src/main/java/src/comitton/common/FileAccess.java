@@ -5,39 +5,16 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msfscc.FileAttributes;
-import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
-import com.hierynomus.msfscc.fileinformation.FileStandardInformation;
-import com.hierynomus.mssmb2.SMB2CreateDisposition;
-import com.hierynomus.mssmb2.SMB2ShareAccess;
-import com.hierynomus.mssmb2.SMBApiException;
-import com.hierynomus.smbj.SMBClient;
-import com.hierynomus.smbj.auth.AuthenticationContext;
-import com.hierynomus.smbj.connection.Connection;
-import com.hierynomus.smbj.session.Session;
-import com.hierynomus.smbj.share.DiskEntry;
-import com.hierynomus.smbj.share.DiskShare;
-import com.rapid7.client.dcerpc.mssrvs.ServerService;
-import com.rapid7.client.dcerpc.mssrvs.dto.NetShareInfo0;
-import com.rapid7.client.dcerpc.transport.RPCTransport;
-import com.rapid7.client.dcerpc.transport.SMBTransportFactories;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 
@@ -64,22 +41,11 @@ public class FileAccess {
 //	private static final int REQUEST_CODE = 1;
 
 	public static final int SMBLIB_JCIFS = 0;
-	public static final int SMBLIB_SMBJ = 1;
 
-	private static int SMBLIB = SMBLIB_SMBJ;
-	private static Session lastSmbjSession = null;
-	private static DiskShare lastSmbjShare = null;
-	private static String lastSessionHost = "";
-	private static String lastSessionShare = "";
-	private static String lastSessionUser = "";
-	private static String lastSessionPass = "";
+	private static int SMBLIB = SMBLIB_JCIFS;
 
 	public static int getSmbMode() {
 		return SMBLIB;
-	}
-
-	public static void setSmbMode(int smblib) {
-		SMBLIB = smblib;
 	}
 
 //	// ユーザ認証付きSambaアクセス
@@ -121,6 +87,7 @@ public class FileAccess {
 
 		// SMBの基本設定
 		Properties prop = new Properties();
+		// JCIFSをAgNO3/jcifs-ngからcodelibs/jcifsに変更、SMB1を動作確認
 		prop.setProperty("jcifs.smb.client.minVersion", "SMB1");
 		// SMB3は動作未確認
 		prop.setProperty("jcifs.smb.client.maxVersion", "SMB311"); // SMB1, SMB202, SMB210, SMB300, SMB302, SMB311
@@ -186,106 +153,6 @@ public class FileAccess {
 		return sfile;
 	}
 
-
-	// smbj認証
-	public static Session smbjSession(String host, String user, String pass) {
-		// 前回と同じならそれを返す
-		if (lastSessionHost.equals(host) && lastSessionUser.equals(user) && lastSessionPass.equals(pass)) {
-			if (lastSmbjSession.getConnection().isConnected()) {
-				return lastSmbjSession;
-			}
-		}
-
-		Connection connection = null;
-		AuthenticationContext auth = null;
-		Session session = null;
-
-		String domain = "";
-		int idx;
-
-		if (user != null && user.length() != 0) {
-			idx = user.indexOf(";");
-			if (idx >= 0){
-				domain = user.substring(0, idx);
-				user = user.substring(idx + 1);
-			}
-		}
-
-		Log.d("FileAccess", "smbjSession domain=" + domain + ", user=" + user + ", pass=" + pass + ", host=" + host);
-
-		SMBClient client = new SMBClient();
-		try {
-			connection = client.connect(host);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		if (domain != null && domain.length() != 0) {
-			auth = new AuthenticationContext(user, pass.toCharArray(), domain);
-
-		} else if (user != null && user.length() != 0) {
-			auth = new AuthenticationContext(user, pass.toCharArray(), null);
-
-		} else {
-			auth = AuthenticationContext.anonymous();
-
-		}
-
-		session = connection.authenticate(auth);
-		lastSmbjSession = session;
-		lastSessionHost = host;
-		lastSessionUser = user;
-		lastSessionPass = pass;
-		return session;
-	}
-
-	// smbj認証
-	public static DiskShare smbjShare(String url, String user, String pass) {
-		Session session = null;
-		DiskShare smbjShare = null;
-
-		String host = "";
-		String share = "";
-		String path = "";
-		int idx;
-
-		host = url.substring(6);
-		idx = host.indexOf("/");
-		if (idx >= 0){
-			path = host.substring(idx + 1);
-			host = host.substring(0, idx);
-		}
-		idx = path.indexOf("/", 1);
-		if (idx >= 0){
-			share = path.substring(0, idx);
-			path = path.substring(idx);
-		}
-
-		// 前回と同じならそれを返す
-		if (lastSessionHost.equals(host) && lastSessionShare.equals(share) && lastSessionUser.equals(user) && lastSessionPass.equals(pass)) {
-			if (lastSmbjShare.isConnected()) {
-				return lastSmbjShare;
-			}
-		}
-		Log.d("FileAccess", "smbjShare user=" + user + ", pass=" + pass + ", host=" + host + ", share=" + share + ", path=" + path);
-
-		session = smbjSession(host, user, pass);
-
-		try {
-			smbjShare = (DiskShare) session.connectShare(share);
-		}
-		catch (SMBApiException e) {
-			Log.d("FileAccess", "smbjShare " + e.getMessage());
-		}
-		lastSmbjShare = smbjShare;
-		lastSessionHost = host;
-		lastSessionShare = share;
-		lastSessionUser = user;
-		lastSessionPass = pass;
-		return smbjShare;
-	}
-
 	// ユーザ認証付きSambaストリーム
 	public static SmbRandomAccessFile jcifsAccessFile(String url, String user, String pass) throws IOException {
 		Log.d("FileAccess", "smbRandomAccessFile url=" + url + ", user=" + user + ", pass=" + pass);
@@ -300,52 +167,6 @@ public class FileAccess {
 		SmbFile sfile = jcifsFile(url, user, pass);
 		stream = new SmbRandomAccessFile(sfile, "r");
 		return stream;
-	}
-
-	// smbjのInput
-	public static com.hierynomus.smbj.share.File smbjAccessFile(String url, String user, String pass) throws IOException {
-		Log.d("FileAccess", "smbjAccessFile url=" + url + ", user=" + user + ", pass=" + pass);
-		InputStream stream;
-		try {
-			if (!exists(url, user, pass)) {
-				throw new IOException("File not found.");
-			}
-		} catch (FileAccessException | IOException e) {
-			throw new IOException("File not found.");
-		}
-
-		// smbjの場合
-		String host = "";
-		String share = "";
-		String path = "";
-		int idx = 0;
-
-		host = url.substring(6);
-		idx = host.indexOf("/");
-		if (idx >= 0){
-			path = host.substring(idx + 1);
-			host = host.substring(0, idx);
-		}
-		idx = path.indexOf("/", 1);
-		if (idx >= 0){
-			share = path.substring(0, idx);
-			path = path.substring(idx + 1);
-		}
-
-		DiskShare smbjShare;
-		smbjShare = FileAccess.smbjShare(url, user, pass);
-
-		com.hierynomus.smbj.share.File smbjFileRead = smbjShare.openFile(path,
-				new HashSet<>(Arrays.asList(AccessMask.GENERIC_READ)),
-				new HashSet<>(Arrays.asList(FileAttributes.FILE_ATTRIBUTE_NORMAL)),
-				new HashSet<>(Arrays.asList(SMB2ShareAccess.FILE_SHARE_READ)),
-				SMB2CreateDisposition.FILE_OPEN,
-				null);
-
-		Log.d("FileAccess", "smbjAccessFile remoteSmbjFile=" + smbjFileRead.toString() + ", size=" + smbjFileRead.getFileInformation(FileStandardInformation.class).getEndOfFile());
-
-//		stream = smbjFileRead.getInputStream();
-		return smbjFileRead;
 	}
 
 	// ローカルファイルのOutputStream
@@ -420,32 +241,6 @@ public class FileAccess {
 				throw new FileAccessException(e);
 			}
 		}
-		else if (SMBLIB == SMBLIB_SMBJ) {
-			// smbjの場合
-			String host = "";
-			String share = "";
-			String path = "";
-			int idx = 0;
-
-			host = url.substring(6);
-			idx = host.indexOf("/");
-			if (idx >= 0){
-				path = host.substring(idx + 1);
-				host = host.substring(0, idx);
-			}
-			idx = path.indexOf("/", 1);
-			if (idx >= 0){
-				share = path.substring(0, idx);
-				path = path.substring(idx + 1);
-			}
-
-			DiskShare smbjShare;
-			smbjShare = FileAccess.smbjShare(url, user, pass);
-
-			if (smbjShare.fileExists(path) || smbjShare.folderExists(path)) {
-				result = true;
-			}
-		}
 		return result;
 	}
 
@@ -465,32 +260,6 @@ public class FileAccess {
 				result = orgfile.isDirectory();
 			} catch (SmbException e) {
 				result = false;
-			}
-		}
-		else if (SMBLIB == SMBLIB_SMBJ) {
-			// smbjの場合
-			String host = "";
-			String share = "";
-			String path = "";
-			int idx = 0;
-
-			host = url.substring(6);
-			idx = host.indexOf("/");
-			if (idx >= 0){
-				path = host.substring(idx + 1);
-				host = host.substring(0, idx);
-			}
-			idx = path.indexOf("/", 1);
-			if (idx >= 0){
-				share = path.substring(0, idx);
-				path = path.substring(idx + 1);
-			}
-
-			DiskShare smbjShare;
-			smbjShare = FileAccess.smbjShare(url, user, pass);
-
-			if (smbjShare.folderExists(path)) {
-				result = true;
 			}
 		}
 		return result;
@@ -531,9 +300,6 @@ public class FileAccess {
 		File lfiles[] = null;
 		SmbFile jcifsFile = null;
 		SmbFile[] jcifsFiles = null;
-		Session smbjSession = null;
-		DiskShare smbjShare = null;
-		ArrayList<FileIdBothDirectoryInformation> smbjFiles = null;
 		String[] fnames = null;
 		ArrayList<FileData> fileList = new ArrayList<FileData>();
 		int length = 0;
@@ -575,40 +341,6 @@ public class FileAccess {
 				return fileList;
 			}
 		}
-
-		else if (SMBLIB == SMBLIB_SMBJ) {
-			// smbjの場合のファイル一覧取得
-			try {
-				if ((url).indexOf("/", 6) == (url).length() - 1) {
-					// ホスト名までしか指定されていない場合
-					// smbj-rpcで共有名のリストを取得する
-					smbjSession = FileAccess.smbjSession(host, user, pass);
-					final RPCTransport transport = SMBTransportFactories.SRVSVC.getTransport(smbjSession);
-					final ServerService serverService = new ServerService(transport);
-					final List<NetShareInfo0> shares = serverService.getShares0();
-					fnames = new String[shares.size()];
-					for (int i = 0; i < shares.size(); i++){
-						fnames[i] = shares.get(i).getNetName();
-					}
-					
-					if (fnames == null || fnames.length == 0) {
-						return fileList;
-					}
-					length = fnames.length;
-				}
-				else {
-					// 共有ポイントまで指定済みの場合
-					smbjShare = FileAccess.smbjShare(url, user, pass);
-					smbjFiles = (ArrayList<FileIdBothDirectoryInformation>)smbjShare.list(path);
-					if (smbjFiles == null || smbjFiles.size() == 0) {
-						return fileList;
-					}
-					length = smbjFiles.size();
-				}
-			} catch (Exception e) {
-				return fileList;
-			}
-		}
 		
 		Log.d("FileAccess", "listFiles length=" + length);
 
@@ -646,30 +378,6 @@ public class FileAccess {
 					}
 					size = jcifsFiles[i].length();
 					date = jcifsFiles[i].lastModified();
-				}
-			}
-			else if (SMBLIB == SMBLIB_SMBJ) {
-				// smbjの場合
-				if ((url).indexOf("/", 6) == (url).length() - 1) {
-					// ホスト名までしか指定されていない場合
-					name = fnames[i];
-					// 全部フォルダ扱い
-					flag = true;
-				}
-				else {
-					// 共有ポイントまで指定済みの場合
-					name = smbjFiles.get(i).getFileName();
-					int len = name.length();
-					if (name.equals(".") || name.equals("..")) {
-						continue;
-					}
-					else if ((smbjFiles.get(i).getFileAttributes() & FileAttributes.FILE_ATTRIBUTE_DIRECTORY.getValue()) != 0) {
-						flag = true;
-					} else {
-						flag = false;
-					}
-					size = smbjFiles.get(i).getEndOfFile();
-					date = smbjFiles.get(i).getLastWriteTime().toEpochMillis();
 				}
 			}
 			
@@ -820,59 +528,6 @@ public class FileAccess {
 				throw new FileAccessException(e);
 			}
 		}
-		else if (SMBLIB == SMBLIB_SMBJ) {
-			// smbjの場合
-
-			if (exists(uri + path + fromfile, user, pass) == false) {
-				// 変更前ファイルが存在しなければエラー
-				throw new FileAccessException("File not found.");
-			}
-
-			if (exists(uri + path + tofile, user, pass) == true) {
-				// 変更後ファイルが存在すればエラー
-				throw new FileAccessException("File access error.");
-			}
-
-			String host = "";
-			String share = "";
-			String entryPath = "";
-			int idx = 0;
-
-			host = (uri + path).substring(6);
-			idx = host.indexOf("/");
-			if (idx >= 0){
-				entryPath = host.substring(idx + 1);
-				host = host.substring(0, idx);
-			}
-			idx = entryPath.indexOf("/", 1);
-			if (idx >= 0){
-				share = entryPath.substring(0, idx);
-				entryPath = entryPath.substring(idx + 1);
-			}
-
-			try {
-				// ファイル名変更
-				DiskShare smbjShare;
-				smbjShare = FileAccess.smbjShare(uri + path, user, pass);
-
-				Log.d("FileAccess", "renameTo FromFile=" + entryPath + fromfile + ", ToFile=" + entryPath + tofile);
-				DiskEntry orgfile = smbjShare.open(entryPath + fromfile,
-						EnumSet.of(AccessMask.DELETE, AccessMask.GENERIC_WRITE),
-						null,
-						SMB2ShareAccess.ALL,
-						SMB2CreateDisposition.FILE_OPEN,
-						null);
-
-				orgfile.rename((entryPath + tofile).replaceAll("/", "\\\\"));
-				orgfile.closeNoWait();
-				return exists(uri + path + tofile, user, pass);
-			}
-			catch (Exception e) {
-				Log.d("FileAccess", "renameTo " + e.getMessage());
-				throw new FileAccessException(e.getMessage());
-			}
-
-		}
 		return false;
 	}
 
@@ -900,35 +555,6 @@ public class FileAccess {
 			} catch (SmbException e) {
 				throw new FileAccessException(e);
 			}
-		}
-		else if (SMBLIB == SMBLIB_SMBJ) {
-			// smbjの場合
-			String host = "";
-			String share = "";
-			String path = "";
-			int idx = 0;
-
-			host = url.substring(6);
-			idx = host.indexOf("/");
-			if (idx >= 0){
-				path = host.substring(idx + 1);
-				host = host.substring(0, idx);
-			}
-			idx = path.indexOf("/", 1);
-			if (idx >= 0){
-				share = path.substring(0, idx);
-				path = path.substring(idx + 1);
-			}
-
-			DiskShare smbjShare;
-			smbjShare = FileAccess.smbjShare(url, user, pass);
-			if (smbjShare.fileExists(path)) {
-				smbjShare.rm(path);
-			}
-			if (smbjShare.folderExists(path)) {
-				smbjShare.rmdir(path, true);
-			}
-			return exists(url, user, pass);
 		}
 		return false;
 	}

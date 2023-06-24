@@ -22,14 +22,6 @@
             android:key="RotateBtn"
             android:summary="dummy"
             android:title="Button to rotate the screen" />
-        <ListPreference
-            android:defaultValue="1"
-            android:dialogTitle="Select SMB library"
-            android:entries="@array/smblib_name_list"
-            android:entryValues="@array/smblib_value_list"
-            android:key="SmbLib"
-            android:summary="dummy"
-            android:title="Select SMB library" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Online Help" >
         <PreferenceScreen

@@ -777,10 +777,6 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 
 		mUseThumbnailTap = SetFileListActivity.getThumbnailTap(mSharedPreferences);	// サムネイルタップで長押しメニューの有効化フラグ
 
-		// SMBライブラリの設定
-		//Log.d("FileSelectActivity", "onCreate SmbMode=" + mSharedPreferences.getInt(DEF.KEY_SMBLIB, 1));
-		FileAccess.setSmbMode(SetCommonActivity.getSmbLib(mSharedPreferences));
-
 		if (mListRotaChg == false) {
 			// 手動で切り替えていない
 			return DEF.setRotation(this, mListRota);

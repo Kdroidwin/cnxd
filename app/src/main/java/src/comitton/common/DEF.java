@@ -275,7 +275,6 @@ public class DEF {
 	public static final String KEY_BOTTOMFILE = "BottomFile";
 	public static final String KEY_PINCHENABLE = "PinchEnable";
 	public static final String KEY_OLDMENU = "OldMenu";
-	public static final String KEY_SMBLIB = "SmbLib";
 
 	public static final String KEY_HIDDENFILE = "HiddenFile";
 

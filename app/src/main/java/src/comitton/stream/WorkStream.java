@@ -1,9 +1,5 @@
 package src.comitton.stream;
 
-import android.util.Log;
-
-import com.hierynomus.msfscc.fileinformation.FileStandardInformation;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -23,7 +19,6 @@ public class WorkStream extends InputStream {
 	private String mPass;
 	private SmbRandomAccessFile mJcifsFile;
 	private RandomAccessFile mLocalFile;
-	private com.hierynomus.smbj.share.File mSmbjFile;
 	private long mPos;
 	private boolean mZipFlag;
 
@@ -37,9 +32,6 @@ public class WorkStream extends InputStream {
 			if (FileAccess.getSmbMode() == FileAccess.SMBLIB_JCIFS) {
 				mJcifsFile = FileAccess.jcifsAccessFile(uri + path, user, pass);
 			}
-			else if (FileAccess.getSmbMode() == FileAccess.SMBLIB_SMBJ) {
-				mSmbjFile = FileAccess.smbjAccessFile(uri + path, user, pass);
-			}
 		}
 		else {
 			mLocalFile = new RandomAccessFile(path, "r");
@@ -51,8 +43,6 @@ public class WorkStream extends InputStream {
 		if (uri != null && uri.length() > 0) {
 			if (FileAccess.getSmbMode() == FileAccess.SMBLIB_JCIFS) {
 				mJcifsFile = FileAccess.jcifsAccessFile(uri + path, user, pass);
-			} else if (FileAccess.getSmbMode() == FileAccess.SMBLIB_SMBJ) {
-				mSmbjFile = FileAccess.smbjAccessFile(uri + path, user, pass);
 			}
 		} else {
 			mLocalFile = new RandomAccessFile(path, "r");
@@ -64,8 +54,6 @@ public class WorkStream extends InputStream {
 			if (mURI != null && mURI.length() > 0) {
 				if (FileAccess.getSmbMode() == FileAccess.SMBLIB_JCIFS) {
 					mJcifsFile.seek(pos);
-				} else if (FileAccess.getSmbMode() == FileAccess.SMBLIB_SMBJ) {
-					//
 				}
 			} else {
 				mLocalFile.seek(pos);
@@ -83,8 +71,6 @@ public class WorkStream extends InputStream {
 			if (mURI != null && mURI.length() > 0) {
 				if (FileAccess.getSmbMode() == FileAccess.SMBLIB_JCIFS) {
 					return mJcifsFile.getFilePointer();
-				} else if (FileAccess.getSmbMode() == FileAccess.SMBLIB_SMBJ) {
-					return mPos;
 				}
 			} else {
 				return mLocalFile.getFilePointer();
@@ -103,9 +89,6 @@ public class WorkStream extends InputStream {
 			if (mURI != null && mURI.length() > 0) {
 				if (FileAccess.getSmbMode() == FileAccess.SMBLIB_JCIFS) {
 					return mJcifsFile.length();
-				}
-				else if (FileAccess.getSmbMode() == FileAccess.SMBLIB_SMBJ) {
-					return mSmbjFile.getFileInformation(FileStandardInformation.class).getEndOfFile();
 				}
 			}
 			else {
@@ -132,8 +115,6 @@ public class WorkStream extends InputStream {
 			if (mURI != null && mURI.length() > 0) {
 				if (FileAccess.getSmbMode() == FileAccess.SMBLIB_JCIFS) {
 					ret = mJcifsFile.read(buf, off, size);
-				} else if (FileAccess.getSmbMode() == FileAccess.SMBLIB_SMBJ) {
-					ret = mSmbjFile.read(buf, mPos, off, size);
 				}
 			} else {
 				ret = mLocalFile.read(buf, off, size);
@@ -167,10 +148,6 @@ public class WorkStream extends InputStream {
 // 閲覧終了時に固まるのでコメントアウト
 //			mJcifsFile.close();
 			mJcifsFile = null;
-		}
-		if (mSmbjFile != null) {
-			mSmbjFile.close();
-			mSmbjFile = null;
 		}
 		if (mLocalFile != null) {
 			mLocalFile.close();
