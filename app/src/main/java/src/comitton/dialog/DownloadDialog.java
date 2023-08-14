@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import src.comitton.common.DEF;
-import src.comitton.common.FileAccess;
-
-import jcifs.smb.SmbRandomAccessFile;
 import jp.dip.muracoro.comittona.R;
+import src.comitton.common.FileAccess;
 import src.comitton.data.FileData;
 import src.comitton.stream.WorkStream;
 
@@ -160,15 +157,15 @@ public class DownloadDialog extends Dialog implements Runnable, Handler.Callback
 			}
 		}
 		else {
-			// ファイル拡張子チェック
-			if (item.length() <= 4) {
-				return false;
-			}
-			String ext = DEF.getFileExt(item);
-			if (!(FileData.isImage(ext) && FileData.isArchive(ext) && FileData.isText(ext))) {
-				// 対象外
-				return false;
-			}
+//			// ファイル拡張子チェック
+//			if (item.length() <= 4) {
+//				return false;
+//			}
+//			String ext = DEF.getFileExt(item);
+//			if (!(FileData.isImage(ext) && FileData.isArchive(ext) && FileData.isText(ext))) {
+//				// 対象外
+//				return false;
+//			}
 
 			// ダウンロード実行
 			try {
