@@ -20,6 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-dontwarn javax.naming.**
 -dontwarn org.slf4j.**
 -keep class org.bouncycastle.jcajce.provider.** { *; }
 -keep class org.bouncycastle.jce.provider.** { *; }
