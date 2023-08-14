@@ -14,7 +14,7 @@ public class MODULE {
 			+ BuildConfig.VERSION_NAME + "\n\n"
 			+ "Special thanks!!\n  Icon Designed by Sigeyuki Koresawa\n\n\n"
 			+ "Using Library\n"
-			+ "  jcifs 2.1.35 (LGPL v2.1)\n"
+			+ "  jcifs (codelibs) 2.1.36 (LGPL v2.1)\n"
 			+ "  unrar 6.2.1\n"
 			+ "  libjpg-turbo 2.1.5.1\n"
 			+ "  libpng 1.6.40\n"
