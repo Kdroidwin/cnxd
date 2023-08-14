@@ -1,8 +1,7 @@
 package src.comitton.activity;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +11,7 @@ import java.util.Map;
 import jp.dip.muracoro.comittona.R;
 import src.comitton.common.DEF;
 import src.comitton.common.FileAccess;
+import src.comitton.common.ImageAccess;
 import src.comitton.config.SetCommonActivity;
 import src.comitton.config.SetConfigActivity;
 import src.comitton.config.SetFileColorActivity;
@@ -42,11 +42,12 @@ import src.comitton.view.list.ListScreenView;
 import src.comitton.view.list.RecordListArea;
 import src.comitton.view.list.TitleArea;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -59,6 +60,9 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
@@ -68,7 +72,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -85,17 +88,8 @@ import android.widget.Toast;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import java.io.InputStream;
-
-import src.comitton.common.ImageAccess;
-import android.content.ContentResolver;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-
-import android.Manifest;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 @SuppressLint("DefaultLocale")
 public class FileSelectActivity extends Activity implements OnTouchListener, ListNoticeListener, BookmarkListenerInterface, Handler.Callback {
@@ -431,12 +425,12 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 			ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
 		}
 
-		//		//==== パーミッション承認状態判定(マイク使用) ====//
-//		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
-//		{
-//			//==== 承認要求を行う ====//
-//			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
-//		}
+		//==== パーミッション承認状態判定(マイク使用) ====//
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+		{
+			//==== 承認要求を行う ====//
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
+		}
 
 
 		// 前回起動時のバージョン取得
@@ -517,37 +511,6 @@ public class FileSelectActivity extends Activity implements OnTouchListener, Lis
 	public static final int WRITE_REQUEST_CODE = 43;
 	public static final int OPEN_REQUEST_CODE = 44;
 	public static final int REQUEST_SDCARD_ACCESS = 2;
-
-	//	@TargetApi(24)
-	public boolean startStorageAccessIntent(File file, int requestCode){
-		Intent intent = null;
-
-		mStorageManager = (StorageManager)mActivity.getSystemService(Context.STORAGE_SERVICE);
-		StorageVolume volume = null;
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-			volume = mStorageManager.getStorageVolume(file);
-			// ルートの場合はnullになる
-		}
-
-		if (volume != null) {
-			//SDカード以下のアクセス権限を付与してもらう
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-				// Android 10.0 以上なら
-				intent = volume.createOpenDocumentTreeIntent();
-				startActivityForResult(intent, requestCode);
-			}
-			else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				// Android 7 以上なら
-				intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-				startActivityForResult(intent, REQUEST_SDCARD_ACCESS);
-			}
-		} else {
-			Toast.makeText(this, "This file cannot be modified.", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		return true;
-	}
-
 
 	// 画面遷移が戻ってきた時の通知
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

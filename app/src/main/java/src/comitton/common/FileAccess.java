@@ -1,8 +1,6 @@
 package src.comitton.common;
 
 import android.content.Context;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.File;
@@ -89,7 +87,7 @@ public class FileAccess {
 		Properties prop = new Properties();
 		// JCIFSをAgNO3/jcifs-ngからcodelibs/jcifsに変更、SMB1を動作確認
 		prop.setProperty("jcifs.smb.client.minVersion", "SMB1");
-		// SMB3は動作未確認
+		// SMB311は動作確認
 		prop.setProperty("jcifs.smb.client.maxVersion", "SMB311"); // SMB1, SMB202, SMB210, SMB300, SMB302, SMB311
 		// https://github.com/AgNO3/jcifs-ng/issues/171
 		prop.setProperty("jcifs.traceResources", "false");
@@ -592,7 +590,6 @@ public class FileAccess {
 	 *
 	 * @return A list of external SD card paths.
 	 */
-	@RequiresApi(Build.VERSION_CODES.KITKAT)
 	public static String[] getExtSdCardPaths(Context context) {
 		List<String> paths = new ArrayList<>();
 		for (File file : context.getExternalFilesDirs("external")) {

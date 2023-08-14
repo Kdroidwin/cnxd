@@ -9,7 +9,6 @@ import java.util.Comparator;
 import jp.dip.muracoro.comittona.R;
 
 import src.comitton.common.DEF;
-import src.comitton.common.FileAccess;
 import src.comitton.config.SetCommonActivity;
 import src.comitton.config.SetFileColorActivity;
 import src.comitton.config.SetFileListActivity;

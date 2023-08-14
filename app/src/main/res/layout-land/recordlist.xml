@@ -16,7 +16,7 @@
         android:orientation="horizontal" >
 
         <ListView
-            android:id="@+id/list"
+            android:id="@android:id/list"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"

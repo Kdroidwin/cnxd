@@ -1,10 +1,7 @@
 package src.comitton.stream;
 
-import jcifs.smb.SmbRandomAccessFile;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 
 import src.comitton.common.FileAccess;
 import src.comitton.exception.FileAccessException;
@@ -15,8 +12,6 @@ public class TextInputStream extends InputStream {
 	public static final int HOSTTYPE_SAMBA = 2;
 
 	private WorkStream mWorkStream;
-	private SmbRandomAccessFile mSambaRnd;
-	private RandomAccessFile mLocalRnd;
 	private int mHostType;
 
 	public TextInputStream() {

@@ -2,7 +2,6 @@ package src.comitton.config;
 
 import src.comitton.common.DEF;
 import jp.dip.muracoro.comittona.R;
-import src.comitton.common.FileAccess;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +14,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
-import android.view.Window;
 
 public class SetCommonActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	private ListPreference mRotateBtn;

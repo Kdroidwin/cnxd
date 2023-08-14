@@ -1,8 +1,8 @@
 package src.comitton.stream;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,17 +20,13 @@ import src.comitton.common.DEF;
 import src.comitton.common.FileAccess;
 import src.comitton.data.FileData;
 
-import jcifs.smb.SmbRandomAccessFile;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import java.io.BufferedOutputStream;
 
 public class ImageManager extends InputStream implements Runnable {
 	public static final int OPENMODE_VIEW = 0;
@@ -2286,9 +2282,6 @@ public class ImageManager extends InputStream implements Runnable {
 
 	/*************************** CompressAccess ***************************/
 	private WorkStream mWorkStream;
-	private SmbRandomAccessFile mSambaRnd;
-	private RandomAccessFile mLocalRnd;
-//	private WebDAVRandomAccessFile mWebDAVRnd;
 	private int mCmpSize;
 	private int mCmpPos;
 

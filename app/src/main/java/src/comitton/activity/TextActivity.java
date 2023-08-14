@@ -5,7 +5,6 @@ import java.util.Date;
 
 import jp.dip.muracoro.comittona.R;
 import src.comitton.common.DEF;
-import src.comitton.common.FileAccess;
 import src.comitton.config.SetCommonActivity;
 import src.comitton.config.SetConfigActivity;
 import src.comitton.config.SetImageActivity;
