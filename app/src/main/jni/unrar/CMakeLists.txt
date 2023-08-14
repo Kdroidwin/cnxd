@@ -1,7 +1,7 @@
 option(
   DOWNLOAD_UNRAR_SOURCES
   "Download UnRAR library, and patch. (Need Linux environment, not Windows)"
-  ON
+  OFF
 )
 
 if(DOWNLOAD_UNRAR_SOURCES)
