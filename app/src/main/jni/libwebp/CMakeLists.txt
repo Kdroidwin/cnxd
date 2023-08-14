@@ -1,7 +1,7 @@
 FetchContent_Declare(
   libwebp
   GIT_REPOSITORY https://github.com/webmproject/libwebp
-  GIT_TAG        v1.3.0
+  GIT_TAG        v1.3.1
 )
 
 option(BUILD_SHARED_LIBS "" OFF)

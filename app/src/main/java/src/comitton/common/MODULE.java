@@ -10,7 +10,7 @@ public class MODULE {
 	public static String aboutTitle(Context context) {
 		return context.getString(R.string.app_name);
 	}
-	public static final String ABOUT_INFO = "\nLast Update : 2023/06/24\n  Version "
+	public static final String ABOUT_INFO = "\nLast Update : 2023/08/14\n  Version "
 			+ BuildConfig.VERSION_NAME + "\n\n"
 			+ "Special thanks!!\n  Icon Designed by Sigeyuki Koresawa\n\n\n"
 			+ "Using Library\n"
@@ -18,7 +18,7 @@ public class MODULE {
 			+ "  unrar 6.2.1\n"
 			+ "  libjpg-turbo 2.1.5.1\n"
 			+ "  libpng 1.6.40\n"
-			+ "  libwebp 1.3.0\n"
+			+ "  libwebp 1.3.1\n"
 			+ "  AndroidSVG 1.4 (ASL v2.0)\n";
 
 	public static boolean isFree() {
