@@ -36,9 +36,13 @@ ComittoNxDはオープンソースの画像ビューワーです. 対応バー�
 - マーク設定にてフィルタONで該当ファイルのみ表示するように変更.
 - マーク設定にて「ディレクトリにも適用する」が一部動作しない不具合の修正.
 
+## Build
+
+アプリをビルドするには[Git](https://git-scm.com/)のインストールが必要です.[Android Studio](https://developer.android.com/studio/install)を利用するか、gradlewコマンドでアプリをビルドしてください.
+
 ## Issues, Feature Requests and Contributing
 
-大歓迎です. 各ページをご自由ください.
+大歓迎です. 各ページをご利用ください.
 
 ## Licence
 
