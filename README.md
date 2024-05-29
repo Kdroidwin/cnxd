@@ -11,7 +11,7 @@ ComittoNxDはオープンソースの画像ビューワーです. 対応バー�
 
 ## Download
 
-[Releases](https://github.com/8cAyqpVKio/cnxd/releases)よりご利用ください.
+[Releases](https://github.com/kdroidwin/cnxd/releases)よりご利用ください.
 
 #### 注意事項
 
