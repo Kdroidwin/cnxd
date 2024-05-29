@@ -8,6 +8,7 @@ https://github.com/8cAyqpVKio/cnxd/actions/workflows/release-clone-versioning.ym
 <img src="app/src/main/res/drawable-hdpi/icon.png" width="100" align="right" alt="logo">
 
 ComittoNxDはオープンソースの画像ビューワーです. 対応バージョンはAndroid5.0以上です.
+このリポジトリは8cAyqpVKioさんのバックアップです。
 
 ## Download
 
