@@ -9,7 +9,7 @@ https://github.com/8cAyqpVKio/cnxd/actions/workflows/release-clone-versioning.ym
 
 ComittoNxDはオープンソースの画像ビューワーです. 対応バージョンはAndroid5.0以上です.
 
-このリポジトリは8cAyqpVKioさんのバックアップです。
+このリポジトリは8cAyqpVKioさんのComittoNxDのバックアップです。
 
 ## Download
 
